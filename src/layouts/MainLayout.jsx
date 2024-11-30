@@ -1,5 +1,12 @@
-import React from "react";
+import { Header } from "../components";
 
-export default function MainLayout() {
-  return <div>MainLayout</div>;
+function MainLayout({ children }) {
+  return (
+    <div>
+      <Header />
+      <div>{children}</div>
+    </div>
+  );
 }
+
+export default MainLayout;

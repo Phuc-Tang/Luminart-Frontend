@@ -1,0 +1,87 @@
+.frame {
+    width: 100%;
+    height: 100%;
+    margin-left: 20px;
+    border-radius: 25px;
+    overflow: hidden;
+}
+:root {
+    --shadow: inset 0 0 5px rgba(255, 255, 255, 0.15);
+}
+.frame-box {
+    display: grid;
+    grid-template-columns: repeat(5, auto); /* 5 cột */
+    grid-template-rows: repeat(4, auto); /* 4 hàng */
+    gap: 10px;
+    justify-content: center;
+    align-content: center;
+    height: 95vh;
+    transition: all 0.3s ease;
+}
+
+.frame-img {
+    position: relative;
+    width: 260px;
+    height: 260px;
+    overflow: hidden;
+    border-radius: 25px;
+    box-shadow: var(--shadow);
+    transition: transform 0.3s ease-in-out;
+}
+
+.frame-text {
+    width: 260px;
+    height: 260px;
+    overflow: visible;
+    padding: 25px 10px 10px 20px;
+    border-radius: 25px;
+    background-color: var(--highlight);
+}
+
+.frame-img img {
+    width: 260px;
+    height: 260px;
+    object-fit: cover;
+    object-position: top;
+}
+
+.slogan {
+    width: 690px;
+    height: 106px;
+    position: relative;
+    font-size: 46px;
+    font-weight: 900;
+    color: var(--surface);
+}
+
+.dash {
+    position: absolute;
+    width: 232px;
+    height: 3px;
+    bottom: 38%;
+    right: 10%;
+    transform: translate(-10%, 0);
+    background-color: var(--surface);
+    border: 1px solid var(--surface);
+}
+
+.welcome {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--surface);
+}
+
+.frame-icon {
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+    width: 100%;
+    height: 90px;
+}
+
+.icon {
+    font-size: 45px;
+    color: var(--surface);
+    transform: rotate(-45deg);
+    display: inline-block;
+}
