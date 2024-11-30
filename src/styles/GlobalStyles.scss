@@ -1,5 +1,45 @@
-@import "normalize.css";
+@import 'normalize.css';
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    // Color
+    --base: #121212;
+    --upper: #181818;
+    --highlight: #9a00ff;
+    --error: #ff0073;
+    --surface: #f2f2f2;
+    --overlay: #e0e0e0;
+    --hint: #b3b3b3;
+}
+
+/* Thay đổi màu nền và màu chữ cho các trường input khi autofill */
+input:-webkit-autofill {
+    background-color: #f0f0f0 !important; /* Màu nền */
+    color: var(--surface) !important; /* Màu chữ */
+    transition: background-color 5000s ease-in-out 0s, color 5000s ease-in-out 0s; /* Làm mượt chuyển đổi */
+}
+
+/* Thay đổi màu chữ cho các trường input khi autofill trên Firefox (sử dụng -moz-placeholder) */
+input:-moz-placeholder {
+    color: var(--surface) !important; /* Màu chữ */
+}
+
+/* Thay đổi màu chữ cho các trường input khi autofill trên các trình duyệt hỗ trợ */
+input:-ms-input-placeholder {
+    color: var(--surface) !important; /* Màu chữ */
+}
 
 body {
-  background-color: #121212;
+    background-color: var(--base);
+    font-family: 'Inter', serif;
+    font-size: 1.6rem;
+    font-optical-sizing: auto;
+    color: var(--surface);
+    text-rendering: optimizeSpeed;
 }
