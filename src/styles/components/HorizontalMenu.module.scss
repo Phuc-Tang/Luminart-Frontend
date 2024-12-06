@@ -1,0 +1,43 @@
+.frame-subject {
+    position: sticky;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    top: 90px;
+    z-index: 90;
+    background-color: var(--base);
+}
+
+.all-channels {
+    background-color: var(--upper);
+}
+
+.all-channels,
+.frame-subj {
+    width: 260px;
+    height: 80px;
+    flex-shrink: 0;
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.frame-subj:hover {
+    background-color: var(--upper);
+}
+.all-channels-text,
+.subject {
+    width: 180px;
+    font-size: 20px;
+    font-weight: bolder;
+    margin-left: 10px;
+}
+.icon,
+.avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 5px;
+    background-color: var(--highlight);
+}

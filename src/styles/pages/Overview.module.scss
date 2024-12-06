@@ -1,0 +1,153 @@
+.frame {
+    display: flex;
+    justify-content: space-between;
+    margin: 20px 50px 0;
+}
+
+.frame .left {
+    width: 1120px;
+    height: auto;
+}
+
+.frame .right {
+    width: 600px;
+    height: auto;
+}
+
+.frame .left .option-table,
+.frame .right .option-table {
+    display: none;
+}
+
+.frame .left .section-handle,
+.frame .right .section-handle {
+    opacity: 0;
+    transition: 0.3s ease;
+}
+
+.frame .left .section-handle button,
+.frame .right .section-handle button {
+    width: auto;
+    height: 30px;
+    border: none;
+    margin: 10px 10px 0;
+    color: var(--highlight);
+    background: transparent;
+}
+
+.frame .left .section:hover .section-handle,
+.frame .right .section:hover .section-handle {
+    opacity: 1;
+}
+
+.frame .left .option-table.active,
+.frame .right .option-table.active {
+    width: 100%;
+    height: auto;
+    display: grid;
+    gap: 10px;
+    box-sizing: border-box;
+}
+
+.frame .left .option-table {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.frame .right .option-table {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.frame .left .option-table .section-btn,
+.frame .right .option-table .section-btn {
+    width: 240px;
+    height: 200px;
+}
+
+.frame .left .option-table .section-btn button,
+.frame .right .option-table .section-btn button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    background-color: var(--upper);
+}
+
+.frame .left .option-table .section-btn .icon,
+.frame .right .option-table .section-btn .icon {
+    width: 100px;
+    height: 70px;
+    display: flex;
+    margin-bottom: 10px;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid transparent;
+    border-image: linear-gradient(54deg, rgba(101, 9, 250, 1) 0%, rgba(139, 0, 139, 1) 72%) 1;
+    background: linear-gradient(153deg, rgba(0, 46, 99, 1) 0%, rgba(75, 0, 130, 1) 61%);
+}
+
+.frame .left .option-table .section-btn .icon .icon-size,
+.frame .right .option-table .section-btn .icon .icon-size {
+    font-size: 40px;
+    color: rgb(245, 124, 0);
+}
+
+.frame .left .option-table .section-btn .title-1,
+.frame .right .option-table .section-btn .title-1 {
+    font-size: 20px;
+    font-weight: bolder;
+    color: var(--surface);
+}
+
+.frame .left .option-table .section-btn .title-2,
+.frame .right .option-table .section-btn .title-2 {
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--hint);
+}
+
+.frame .left .frame-add-section,
+.frame .right .frame-add-section {
+    display: none;
+}
+
+.frame .left .frame-add-section.active,
+.frame .right .frame-add-section.active {
+    display: flex;
+    width: auto;
+    height: 50px;
+    margin-bottom: 10px;
+    text-align: center;
+    align-content: center;
+    justify-content: center;
+}
+
+.frame .left .frame-add-section .add-section-btn,
+.frame .right .frame-add-section .add-section-btn {
+    display: none;
+    width: auto;
+    height: auto;
+    background: transparent;
+    border: none;
+    color: var(--surface);
+    font-size: 16px;
+    border-radius: 5px;
+    padding: 10px;
+    cursor: pointer;
+    border: 2px solid var(--surface);
+}
+
+.frame .left .frame-add-section .add-section-btn:hover,
+.frame .right .frame-add-section .add-section-btn:hover {
+    color: var(--highlight);
+    border: 2px solid var(--highlight);
+}
+
+.frame .left .frame-add-section .add-section-btn.active,
+.frame .right .frame-add-section .add-section-btn.active {
+    display: block;
+}

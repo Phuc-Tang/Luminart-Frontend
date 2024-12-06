@@ -1,0 +1,24 @@
+//Spotlight Artwork
+
+.frame-spotlight-artwork {
+    width: 100%;
+    height: auto;
+}
+
+.frame-spotlight-artwork .title {
+    height: 50px;
+    align-content: center;
+    border-left: 7px solid var(--highlight);
+}
+
+.frame-spotlight-artwork .title p {
+    font-size: 30px;
+    font-weight: bolder;
+    margin-left: 10px;
+}
+
+.frame-spotlight-artwork .spotligh-artwork {
+    width: 100%;
+    height: 550px;
+    background-color: aqua;
+}

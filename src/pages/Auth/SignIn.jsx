@@ -1,34 +1,14 @@
 import classNames from 'classnames/bind';
 import styles from '../../styles/pages/Auth.module.scss';
 import 'react-toastify/dist/ReactToastify.css';
-import { useState } from 'react';
 import { FaFacebook, FaGoogle, FaGithub } from 'react-icons/fa';
 import { Slide, toast, ToastContainer } from 'react-toastify';
-import { validateSignIn } from '../../utils/validators/authValidation';
+import { useSignInForm } from '../../hooks/useAuth';
 
 const cx = classNames.bind(styles);
 
 function SignIn() {
-    const [errors, setErrors] = useState({});
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    console.log(errors);
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-
-        const validationErrors = validateSignIn(email, password);
-
-        if (Object.keys(validationErrors).length > 0) {
-            setErrors(validationErrors); // Set lỗi vào state
-            toast.error(Object.values(validationErrors)[0]); // Hiển thị lỗi đầu tiên
-            return;
-        }
-
-        // Nếu không có lỗi
-        setErrors({});
-        toast.success('Login successful!');
-    };
+    const { formValues, errors, handleChange, handleSubmit } = useSignInForm();
 
     return (
         <div className={cx('frame-left')}>
@@ -53,16 +33,16 @@ function SignIn() {
                         className={cx('email', { 'input-error': errors.email })}
                         type="text"
                         placeholder="Email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        value={formValues.email}
+                        onChange={handleChange}
                     />
                     <input
                         name="password"
                         className={cx('password', { 'input-error': errors.password })}
                         type="password"
                         placeholder="Password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
+                        value={formValues.password}
+                        onChange={handleChange}
                     />
                     <button className={cx('sign-in')} type="submit">
                         <p className={cx('signin-submit')}>Sign in</p>

@@ -1,0 +1,138 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Rubik+Wet+Paint&display=swap');
+
+.frame {
+    position: fixed; /* Giữ cố định header */
+    top: 0; /* Căn header ở phía trên */
+    left: 0; /* Căn header sát mép trái */
+    width: 100%; /* Header trải rộng toàn màn hình */
+    z-index: 100; /* Đảm bảo header nằm trên các phần tử khác */
+    background-color: var(--base); /* Màu nền cho header */
+    padding: 10px 20px; /* Khoảng cách bên trong header */
+}
+
+.header-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 70px;
+}
+
+.left,
+.right {
+    width: 300px;
+    display: flex;
+    align-items: center;
+}
+
+.logo-frame {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    background-color: var(--highlight);
+}
+
+.app-name {
+    font-family: 'Rubik Wet Paint', system-ui;
+    font-size: 32px;
+    margin-left: 10px;
+}
+
+.search-bar {
+    width: 900px;
+    height: 50px;
+    background-color: transparent;
+    border: 2px solid var(--hint);
+    outline: none;
+    border-radius: 10px;
+    color: var(--surface);
+    caret-color: var(--highlight);
+    padding-left: 20px;
+    font-size: 16px;
+}
+
+.search-bar:focus {
+    border: 2px solid var(--highlight);
+}
+
+.right {
+    width: 300px;
+    justify-content: space-between;
+}
+
+.avatar-frame {
+    position: relative;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.avatar-frame img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 50%;
+    object-position: center;
+}
+
+.avatar-frame .avatar-dropdown {
+    position: absolute;
+    display: none;
+    width: 230px;
+    height: auto;
+    right: 0;
+    border-radius: 5px;
+    background-color: #202020;
+}
+
+.avatar-frame .avatar-dropdown .dropdown-table {
+    margin: 10px;
+}
+
+.avatar-frame .avatar-dropdown .username {
+    display: flex;
+    gap: 10px;
+    height: 40px;
+    align-items: center;
+    margin: 5px 20px 0;
+}
+.avatar-frame .avatar-dropdown .position {
+    margin: 0 20px;
+}
+
+.avatar-frame .avatar-dropdown .username {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.avatar-frame .avatar-dropdown .position {
+    margin-left: 45px;
+    font-size: 13px;
+}
+
+.avatar-frame .avatar-dropdown hr {
+    margin: 5px 20px;
+    border-color: #202020;
+}
+
+.avatar-frame .avatar-dropdown .tab {
+    gap: 10px;
+    display: flex;
+    padding: 20px;
+    height: 40px;
+    align-items: center;
+}
+
+.avatar-frame .avatar-dropdown .tab:hover {
+    border-radius: 5px;
+    background-color: var(--highlight);
+}
+
+.avatar-frame .avatar-dropdown .tab p {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.avatar-frame .active {
+    display: block;
+}
