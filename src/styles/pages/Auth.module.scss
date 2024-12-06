@@ -1,3 +1,13 @@
+.frame {
+    width: 100%;
+    height: 100%;
+}
+
+.navigate {
+    display: flex;
+    gap: 10px;
+}
+
 .frame-left {
     width: 692px;
     height: 100%;
@@ -159,20 +169,20 @@
     font-weight: 300;
     color: var(--highlight);
 }
-.custom-toast {
+.custom-toast-error {
     width: 21.875rem;
     height: 5rem;
     border-radius: 5px !important;
     background-color: var(--upper) !important;
 }
 
-.custom-body {
+.custom-body-error {
     font-size: 16px;
     font-weight: 700;
     color: var(--error);
     text-align: left;
 }
 
-.custom-progress {
+.custom-progress-error {
     background-color: var(--error) !important;
 }
