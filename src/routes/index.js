@@ -6,12 +6,17 @@ import SignUp from '../pages/Auth/SignUp';
 import Profile from '../pages/Profile/Profile';
 import Verify from '../pages/Auth/Verify';
 
+// Artwork
+import { Detail, Upload } from '../pages/Artwork';
+
 const publicRoutes = [
     { path: '/', component: Home, layout: HomeLayout },
     { path: '/signin', component: SignIn, layout: AuthLayout },
     { path: '/signup', component: SignUp, layout: AuthLayout },
-    { path: '/profile/:id', component: Profile },
-    { path: '/verify-email', component: Verify, layout: VerifyLayout }
+    { path: '/profile/:username', component: Profile },
+    { path: '/verify-email', component: Verify, layout: VerifyLayout },
+    //Artwork routes
+    { path: '/artwork/:artID', component: Detail }
 ];
 
 export { publicRoutes };

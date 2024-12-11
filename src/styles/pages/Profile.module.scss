@@ -37,6 +37,37 @@
     justify-content: flex-end;
 }
 
+.infomation .info .user-follow {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.infomation .info .user-follow .follow-btn {
+    width: auto;
+    height: 40px;
+    cursor: pointer;
+    align-content: center;
+    text-align: center;
+    border-radius: 30px;
+    border: 2px solid var(--highlight);
+}
+
+.infomation .info .user-follow .follow-btn:hover {
+    background-color: var(--highlight);
+}
+
+.infomation .info .user-follow .follow-btn p {
+    padding: 0 20px;
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--highlight);
+}
+
+.infomation .info .user-follow .follow-btn:hover p {
+    color: var(--surface);
+}
+
 .infomation .info .username {
     font-size: 64px;
     font-weight: bolder;

@@ -19,7 +19,25 @@ export const signIn = async (email, password) => {
         if (error) {
             return { error: error.response.data };
         }
-        return { error: 'An error occurred while registering.' };
+        return { error: 'An error occurred while login.' };
+    }
+};
+
+export const signInGoogle = async () => {
+    try {
+        const response = await api.get(`/auth/google`);
+        return response.data; // Trả về dữ liệu khi đăng nhập thành công
+    } catch (error) {
+        if (error.response) {
+            // Nếu có response từ server
+            return { error: error.response.data };
+        } else if (error.request) {
+            // Nếu không nhận được response
+            return { error: 'No response from server.' };
+        } else {
+            // Nếu có lỗi trong quá trình cấu hình request
+            return { error: 'An error occurred while login by Google.' };
+        }
     }
 };
 
@@ -42,23 +60,34 @@ export const signUp = async (username, email, password) => {
     }
 };
 
-export const getUserInfo = async () => {
+export const signOut = async () => {
     try {
-        const response = await api.get(`/auth/profile`);
+        const response = await api.get(`/logout`);
 
         return response.data;
     } catch (error) {
         if (error) {
             return { error: error.response.data };
         }
+        return { error: 'An error occurred while logout.' };
+    }
+};
+
+export const getUserInfo = async () => {
+    try {
+        const response = await api.get(`/auth/profile`);
+        return response.data;
+    } catch (error) {
+        if (error.response) {
+            return { error: error.response.data };
+        }
         return { error: 'An error occurred while registering.' };
     }
 };
 
-// lấy của người khác (để sau)
-export const getProfile = async (id) => {
+export const getProfile = async (username) => {
     try {
-        const response = await axios.get(`${API_URL}/user/profile/${id}`, {});
+        const response = await axios.get(`${API_URL}/user/profile/${username}`, {});
 
         return response.data;
     } catch (error) {
@@ -80,5 +109,21 @@ export const verifyEmail = async (token) => {
             return { error: error.response.message };
         }
         return { error };
+    }
+};
+
+export const followUser = async (followerID, followingID) => {
+    try {
+        const response = await api.post(`/user/follow`, {
+            followerID,
+            followingID
+        });
+
+        return response.data;
+    } catch (error) {
+        if (error) {
+            return { error: error.response.data };
+        }
+        return { error: 'An error occurred while follow user.' };
     }
 };

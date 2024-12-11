@@ -1,5 +1,5 @@
 import classNames from 'classnames/bind';
-import styles from '../../styles/pages/ArtworkUpload.module.scss';
+import styles from '../../styles/pages/Artwork.module.scss';
 
 const cx = classNames.bind(styles);
 

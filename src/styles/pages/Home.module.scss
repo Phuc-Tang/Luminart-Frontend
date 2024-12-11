@@ -24,13 +24,13 @@
     gap: 10px;
     width: 100%; /* Đảm bảo grid chiếm toàn bộ chiều rộng container */
     box-sizing: border-box; /* Tính toán khoảng cách đúng đắn */
+    overflow-y: hidden;
 }
 
 .frame-artwork {
     position: relative;
     height: 260px; /* Độ cao cố định */
     border-radius: 5px;
-    background-color: aqua;
     overflow: hidden;
     cursor: pointer;
     align-items: flex-end;

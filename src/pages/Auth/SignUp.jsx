@@ -8,6 +8,7 @@ import { useSignUpForm } from '../../hooks/useAuth';
 const cx = classNames.bind(styles);
 
 function SignUp() {
+    const HOSTING_URL = import.meta.env.VITE_HOSTING_URL;
     const { formValues, errors, handleChange, handleSubmit } = useSignUpForm();
     return (
         <div className={cx('frame-left')}>
@@ -57,7 +58,7 @@ function SignUp() {
                 </form>
                 <div className={cx('other')}>
                     <p className={cx('have-account')}>Already have an account?</p>
-                    <a href="http://localhost:5173/signin">
+                    <a href={`${HOSTING_URL}signin`}>
                         <div className={cx('sign-up')}>Sign In</div>
                     </a>
                 </div>

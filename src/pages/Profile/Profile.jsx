@@ -6,27 +6,28 @@ import { FaPalette } from 'react-icons/fa';
 import { useParams } from 'react-router-dom';
 import { useStickyActive } from '../../hooks/useStickyActive';
 import { useProfileUser } from '../../hooks/useProfile';
+import { useUser } from '../../hooks/useUserInfo';
 import { useState } from 'react';
-import { toFriendlyUrl } from '../../utils/string/stringUtils';
 import { Overview, Gallery, Favorites, Posts, About } from './index';
 
 const cx = classNames.bind(styles);
 
 function Profile() {
-    const { id } = useParams();
+    const { username } = useParams();
+    const { user } = useUser();
     const { menuRef, isVisible } = useStickyActive(90);
     const [activeTab, setActiveTab] = useState('Overview');
     const [customSection, setCustomSection] = useState(false);
-    const { profileUser, loading, error } = useProfileUser(id);
+    const { profileUser, loading, error } = useProfileUser(username);
     const userInfo = profileUser && profileUser.user;
     const cover = userInfo && userInfo.profile.cover;
     const avatar = userInfo && userInfo.profile.avatar;
-    const username = userInfo && userInfo.username;
+    const fullName = userInfo && userInfo.profile.fullName;
     const position = userInfo && userInfo.profile.position;
     const follower = userInfo && userInfo.profile.followers_count;
     const following = userInfo && userInfo.profile.following_count;
-
-    // console.log(toFriendlyUrl(username));
+    console.log('data user', profileUser && profileUser.user.userID);
+    console.log('data user login', user && user.user.userID);
 
     const tabMenu = [
         { id: 1, tab: 'Overview', component: <Overview customSection={customSection} /> },
@@ -43,7 +44,14 @@ function Profile() {
                         <img src={`${avatar}`} alt="avatar" style={{ width: '200px', height: '200px' }} />
                     </div>
                     <div className={cx('info')}>
-                        <p className={cx('username')}>{username}</p>
+                        <div className={cx('user-follow')}>
+                            <p className={cx('username')}>{fullName === null ? username : fullName}</p>
+                            {user && profileUser && user.user.userID === profileUser.user.userID ? null : (
+                                <div className={cx('follow-btn')}>
+                                    <p>Follow</p>
+                                </div>
+                            )}
+                        </div>
                         <p className={cx('position')}>{position}</p>
                         <div className={cx('parameter')}>
                             <p className={cx('follower')}>{follower} Follower</p>

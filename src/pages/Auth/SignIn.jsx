@@ -2,13 +2,15 @@ import classNames from 'classnames/bind';
 import styles from '../../styles/pages/Auth.module.scss';
 import 'react-toastify/dist/ReactToastify.css';
 import { FaFacebook, FaGoogle, FaGithub } from 'react-icons/fa';
-import { Slide, toast, ToastContainer } from 'react-toastify';
-import { useSignInForm } from '../../hooks/useAuth';
+import { Slide, ToastContainer } from 'react-toastify';
+import { useSignInForm, useSignInGoogle } from '../../hooks/useAuth';
 
 const cx = classNames.bind(styles);
 
 function SignIn() {
+    const HOSTING_URL = import.meta.env.VITE_HOSTING_URL;
     const { formValues, errors, handleChange, handleSubmit } = useSignInForm();
+    const { handleGoogleLogin } = useSignInGoogle();
 
     return (
         <div className={cx('frame-left')}>
@@ -16,15 +18,22 @@ function SignIn() {
                 <p className={cx('title')}>Sign in account</p>
                 <p className={cx('sub-title')}>Enter your personal data to login your account</p>
                 <div className={cx('social')}>
-                    <div className={cx('facebook')}>
-                        <FaFacebook />
-                    </div>
-                    <div className={cx('google')}>
-                        <FaGoogle />
-                    </div>
-                    <div className={cx('github')}>
-                        <FaGithub />
-                    </div>
+                    <a hret="">
+                        <div className={cx('facebook')}>
+                            <FaFacebook />
+                        </div>
+                    </a>
+
+                    <a href="http://localhost:7000/api/auth/google">
+                        <div className={cx('google')}>
+                            <FaGoogle />
+                        </div>
+                    </a>
+                    <a href="">
+                        <div className={cx('github')}>
+                            <FaGithub />
+                        </div>
+                    </a>
                 </div>
                 <p className={cx('or')}>Or</p>
                 <form className={cx('form')} onSubmit={handleSubmit}>
@@ -50,7 +59,7 @@ function SignIn() {
                 </form>
                 <div className={cx('other')}>
                     <p className={cx('have-account')}>Don't have an account?</p>
-                    <a href="http://localhost:5173/signup">
+                    <a href={`${HOSTING_URL}signup`}>
                         <div className={cx('sign-up')}>Sign Up</div>
                     </a>
                 </div>
