@@ -39,5 +39,13 @@
     width: 80px;
     height: 80px;
     border-radius: 5px;
-    background-color: var(--highlight);
+    background: var(--gradiant-primary);
+}
+
+.avatar img {
+    width: 80px;
+    height: 80px;
+    border-radius: 5px;
+    object-fit: cover;
+    object-position: top;
 }

@@ -1,35 +1,42 @@
 import { useState, useEffect } from 'react';
 import { getProfile } from '../api/users';
 
-export const useProfileUser = (id) => {
-    // Thêm id như một tham số cho hook
+export const useProfileUser = (username) => {
     const [profileUser, setProfileUser] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false); // Đặt mặc định là false
     const [error, setError] = useState(null);
 
     useEffect(() => {
         const fetchProfile = async () => {
-            if (!id) return; // Kiểm tra xem id có hợp lệ không
+            if (!username) {
+                setProfileUser(null);
+                setError('Username is required');
+                setLoading(false);
+                return;
+            }
+
+            setLoading(true); // Chỉ bật loading khi username hợp lệ
+            setError(null);
 
             try {
-                const userInfo = await getProfile(id);
+                const userInfo = await getProfile(username);
                 if (userInfo?.error) {
-                    setError(userInfo.error); // Cập nhật lỗi nếu có
+                    setError(userInfo.error);
                     setProfileUser(null);
                 } else {
-                    setProfileUser(userInfo); // Cập nhật thông tin người dùng
+                    setProfileUser(userInfo);
                 }
-            } catch (error) {
-                console.error('Error fetching user info:', error.message);
-                setError(error.message);
-                setProfileUser(null); // Đặt lại profileUser nếu có lỗi
+            } catch (err) {
+                console.error('Error fetching user info:', err.message);
+                setError(err.message);
+                setProfileUser(null);
             } finally {
-                setLoading(false); // Kết thúc loading
+                setLoading(false); // Đảm bảo loading kết thúc
             }
         };
 
         fetchProfile();
-    }, [id]); // Chạy lại mỗi khi id thay đổi
+    }, [username]);
 
     return { profileUser, loading, error };
 };

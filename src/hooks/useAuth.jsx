@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
-import { signUp, signIn, verifyEmail } from '../api/users';
+import { signUp, signIn, signInGoogle, signOut, verifyEmail, getUserInfo } from '../api/users';
 import { useNavigate } from 'react-router-dom';
 import { validateSignUp, validateSignIn } from '../utils/validators/authValidation';
 import { useUser } from './useUserInfo';
@@ -70,8 +70,7 @@ export const useSignUpForm = () => {
 };
 
 export const useSignInForm = () => {
-    const { user, setUser } = useUser();
-
+    const { login } = useUser();
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(true); // Loading khi fetch dữ liệu
     const navigate = useNavigate();
@@ -118,7 +117,8 @@ export const useSignInForm = () => {
                     bodyClassName: 'custom-body-success',
                     progressClassName: 'custom-progress-success'
                 }); // Hiển thị thành công
-                setUser(result.data);
+                const userInfo = await getUserInfo();
+                login(userInfo); // Lưu thông tin vào Context
                 setFormValues({ email: '', password: '' }); // Reset form
                 setTimeout(() => navigate('/'), 3000);
             }
@@ -137,6 +137,37 @@ export const useSignInForm = () => {
         errors,
         handleChange,
         handleSubmit
+    };
+};
+
+export const useSignInGoogle = () => {
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const { login } = useUser(); // Dùng context để lưu trữ người dùng
+
+    const handleGoogleLogin = async () => {
+        setLoading(true);
+        setError(null);
+
+        const result = await signInGoogle();
+        const userInfo = await getUserInfo();
+        login(userInfo);
+
+        if (result.error) {
+            setError(result.error);
+            console.error('Google login failed:', result.error);
+        } else {
+            console.log('Google login successful:', result);
+            login(result.user); // Lưu thông tin người dùng vào context
+        }
+
+        setLoading(false);
+    };
+
+    return {
+        loading,
+        error,
+        handleGoogleLogin
     };
 };
 

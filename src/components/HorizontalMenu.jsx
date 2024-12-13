@@ -1,5 +1,6 @@
 import classNames from 'classnames/bind';
 import styles from '../styles/components/HorizontalMenu.module.scss';
+import { subjectData } from '../../data/data';
 
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
@@ -35,11 +36,13 @@ function HorizontalMenu() {
                 }}
                 navigation={false}
             >
-                {subject.map((subj) => {
+                {subjectData.map((subj) => {
                     return (
                         <SwiperSlide key={subj.id}>
                             <div className={cx('frame-subj')}>
-                                <div className={cx('avatar')}></div>
+                                <div className={cx('avatar')}>
+                                    <img src={subj.subjectImg} alt={subj.subject} />
+                                </div>
                                 <p className={cx('subject')}>{subj.subject}</p>
                             </div>
                         </SwiperSlide>

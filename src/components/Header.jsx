@@ -6,27 +6,26 @@ import { ImUpload } from 'react-icons/im';
 import { BiStreetView } from 'react-icons/bi';
 import { GrUpgrade } from 'react-icons/gr';
 import { FaSignOutAlt, FaImages, FaUserCircle } from 'react-icons/fa';
+import { TbLogin2, TbLogin } from 'react-icons/tb';
 import { IoMdSettings } from 'react-icons/io';
 import { MdLanguage } from 'react-icons/md';
 import { RiColorFilterFill } from 'react-icons/ri';
 import { useUser } from '../hooks/useUserInfo';
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const cx = classNames.bind(styles);
 
 function Header() {
+    const HOSTING_URL = import.meta.env.VITE_HOSTING_URL;
+    const navigate = useNavigate();
     const [isDropdownActive, setDropdownActive] = useState(false); // Trạng thái dropdown
-    const { user, loading, error } = useUser();
+    const { user, signOut } = useUser();
 
-    useEffect(() => {
-        // Đây là ví dụ cách kiểm tra và xử lý sau khi user có giá trị mới
-        if (user) {
-            console.log('User info has changed:', user);
-            // Có thể thực hiện các hành động sau khi user được cập nhật
-        }
-    }, [user]);
-
-    console.log(user);
+    const handleLogout = async () => {
+        await signOut();
+        navigate('/');
+    };
 
     const handleToggleDropdown = () => {
         setDropdownActive((prev) => !prev); // Toggle trạng thái
@@ -35,25 +34,33 @@ function Header() {
         <div className={cx('frame')}>
             <div className={cx('header-box')}>
                 <div className={cx('left')}>
-                    <div className={cx('logo-frame')}></div>
-                    <div className={cx('app-name')}>LUMINART</div>
+                    <a href={`${HOSTING_URL}`}>
+                        <div className={cx('logo-frame')}></div>
+                    </a>
+                    <a href={`${HOSTING_URL}`}>
+                        <div className={cx('app-name')}>LUMINART</div>
+                    </a>
                 </div>
                 <input type="text" className={cx('search-bar')} />
 
-                {loading ? (
-                    <div className={cx('right')}>Loading...</div> // Hiển thị loading khi đang tải thông tin
-                ) : user && user.user ? (
+                {user && user.user ? (
                     <div className={cx('right')}>
-                        <ImUpload />
-                        <IoIosChatbubbles />
-                        <IoIosNotifications />
+                        <a href={`${HOSTING_URL}/artwork/upload/`} className={cx('icons')}>
+                            <ImUpload />
+                        </a>
+                        <p className={cx('icons')}>
+                            <IoIosChatbubbles />
+                        </p>
+                        <p className={cx('icons')}>
+                            <IoIosNotifications />
+                        </p>
                         <div className={cx('avatar-frame')}>
-                            <img src={image.image6} alt="avatar" onClick={handleToggleDropdown} />
+                            <img src={user && user.user.profile.avatar} alt="avatar" onClick={handleToggleDropdown} />
                             <div className={cx('avatar-dropdown', { active: isDropdownActive })}>
                                 <div className={cx('dropdown-table')}>
                                     <div className={cx('username')}>
                                         <FaUserCircle />
-                                        <p>{user.user.username}</p>
+                                        <p>{user.user.profile.fullName}</p>
                                     </div>
                                     <div className={cx('position')}>
                                         <p>{user.user.profile.position}</p>
@@ -65,7 +72,10 @@ function Header() {
                                         </p>
                                         <p>Upgrade</p>
                                     </div>
-                                    <a href={`http://localhost:5173/profile/${user.user.userID}`} className={cx('tab')}>
+                                    <a
+                                        href={`${HOSTING_URL}/profile/${user && user.user.username}`}
+                                        className={cx('tab')}
+                                    >
                                         <p>
                                             <BiStreetView />
                                         </p>
@@ -97,7 +107,7 @@ function Header() {
                                         </p>
                                         <p>Setting</p>
                                     </div>
-                                    <div className={cx('tab')}>
+                                    <div className={cx('tab')} onClick={handleLogout}>
                                         <p>
                                             <FaSignOutAlt />
                                         </p>
@@ -109,8 +119,18 @@ function Header() {
                     </div>
                 ) : (
                     <div className={cx('right')}>
-                        <div>Sign In</div>
-                        <div>Sign Up</div>
+                        <a href="/signin">
+                            <div className={cx('sign-btn', 'sign-in')}>
+                                <TbLogin2 />
+                                <p>Sign In</p>
+                            </div>
+                        </a>
+                        <a href="/signup">
+                            <div className={cx('sign-btn', 'sign-up')}>
+                                <TbLogin />
+                                <p>Sign Up</p>
+                            </div>
+                        </a>
                     </div>
                 )}
             </div>
