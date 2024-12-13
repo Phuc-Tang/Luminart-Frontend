@@ -128,7 +128,7 @@
 .sign-in {
     margin-top: 35px;
     cursor: pointer;
-    background-color: var(--highlight);
+    background: var(--gradiant-primary);
 }
 .signin-submit {
     font-size: 16px;
@@ -167,7 +167,7 @@
 .forgot {
     font-size: 16px;
     font-weight: 300;
-    color: var(--highlight);
+    color: var(--secondary);
 }
 .custom-toast-error {
     width: 21.875rem;

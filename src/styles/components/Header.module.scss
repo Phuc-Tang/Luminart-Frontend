@@ -28,7 +28,7 @@
     width: 50px;
     height: 50px;
     border-radius: 10px;
-    background-color: var(--highlight);
+    background: var(--gradiant-primary);
 }
 
 .app-name {
@@ -48,10 +48,13 @@
     caret-color: var(--highlight);
     padding-left: 20px;
     font-size: 16px;
-}
-
-.search-bar:focus {
-    border: 2px solid var(--highlight);
+    border-image: linear-gradient(
+            310deg,
+            rgba(122, 153, 217, 1) 0%,
+            rgba(73, 125, 189, 1) 46%,
+            rgba(28, 58, 148, 1) 100%
+        )
+        1;
 }
 
 .right {
@@ -129,7 +132,7 @@
 
 .avatar-frame .avatar-dropdown .tab:hover {
     border-radius: 5px;
-    background-color: var(--highlight);
+    background: var(--gradiant-primary);
 }
 
 .avatar-frame .avatar-dropdown .tab p {
@@ -157,7 +160,7 @@
 }
 
 .right .sign-up {
-    background-color: var(--highlight);
+    background: var(--gradiant-primary);
 }
 
 .right .sign-btn p {

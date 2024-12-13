@@ -50,7 +50,8 @@ export const RevealDiscussion = ({ children }) => {
                     right: 0,
                     zIndex: 1,
                     display: 'inline-block',
-                    backgroundColor: '#9a00ff'
+                    background:
+                        'linear-gradient(310deg, rgba(122, 153, 217, 1) 0%, rgba(73, 125, 189, 1) 46%, rgba(28, 58, 148, 1) 100%)'
                 }}
                 variants={{
                     hidden: { right: 0 },

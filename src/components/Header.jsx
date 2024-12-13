@@ -45,9 +45,9 @@ function Header() {
 
                 {user && user.user ? (
                     <div className={cx('right')}>
-                        <p className={cx('icons')}>
+                        <a href={`${HOSTING_URL}/artwork/upload/`} className={cx('icons')}>
                             <ImUpload />
-                        </p>
+                        </a>
                         <p className={cx('icons')}>
                             <IoIosChatbubbles />
                         </p>
@@ -60,7 +60,7 @@ function Header() {
                                 <div className={cx('dropdown-table')}>
                                     <div className={cx('username')}>
                                         <FaUserCircle />
-                                        <p>{user.user.username}</p>
+                                        <p>{user.user.profile.fullName}</p>
                                     </div>
                                     <div className={cx('position')}>
                                         <p>{user.user.profile.position}</p>
@@ -72,7 +72,10 @@ function Header() {
                                         </p>
                                         <p>Upgrade</p>
                                     </div>
-                                    <a href={`${HOSTING_URL}profile/${user.user.username}`} className={cx('tab')}>
+                                    <a
+                                        href={`${HOSTING_URL}/profile/${user && user.user.username}`}
+                                        className={cx('tab')}
+                                    >
                                         <p>
                                             <BiStreetView />
                                         </p>

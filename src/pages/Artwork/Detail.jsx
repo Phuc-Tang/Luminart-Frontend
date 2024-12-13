@@ -26,7 +26,7 @@ function DetailArtwork() {
     const { artID } = useParams();
     const { user } = useUser();
     const { artwork, loading, errors } = useDetailArtwork(artID);
-    const userID = user && user.user.userID;
+    const userID = user?.user?.userID;
     const contentID = artwork && artwork.artID;
     const { likeClick, toggleLike, likeError } = useLikeArtwork(contentID);
     const [newComment, setNewComment] = useState('');
@@ -36,6 +36,14 @@ function DetailArtwork() {
         artID,
         userID
     );
+
+    const inputRef = useRef(null);
+
+    const focusTextField = () => {
+        if (inputRef.current) {
+            inputRef.current.focus(); // Đặt focus vào div nhập liệu
+        }
+    };
 
     const handleCreateSubmit = (e) => {
         e.preventDefault();
@@ -47,6 +55,7 @@ function DetailArtwork() {
         setNewComment('');
 
         const textField = document.getElementById('userTextField'); // Lấy bằng id
+        textField.focus();
         if (textField) {
             textField.textContent = ''; // Xóa nội dung
         }
@@ -62,12 +71,11 @@ function DetailArtwork() {
         setReplyComments('');
 
         const textField = document.getElementById('userTextFieldReply'); // Lấy bằng id
+        textField.focus();
         if (textField) {
             textField.textContent = ''; // Xóa nội dung
         }
     };
-
-    console.log('reply ', replyComments);
 
     const handleEditSubmit = (e, commentID) => {
         e.preventDefault();
@@ -81,7 +89,7 @@ function DetailArtwork() {
         }
     };
 
-    const renderComments = (comments) => {
+    const renderComments = (comments, depth = 0) => {
         return (
             comments &&
             comments.map((cmt) => {
@@ -94,6 +102,9 @@ function DetailArtwork() {
                 };
 
                 const handleRepComment = (commentID) => {
+                    if (inputRef.current) {
+                        inputRef.current.focus();
+                    }
                     setActiveRepCmt(commentID === activeRepCmt ? null : cmt.commentID);
                 };
 
@@ -104,6 +115,9 @@ function DetailArtwork() {
                 };
 
                 const handleEditComment = (commentID, currentContent) => {
+                    if (inputRef.current) {
+                        inputRef.current.focus();
+                    }
                     setEditCmtOption(commentID === editCmtOption ? null : commentID);
                     setEditComment(currentContent || ''); // Khi mở chế độ chỉnh sửa, set nội dung comment hiện tại vào editComment
                 };
@@ -193,6 +207,7 @@ function DetailArtwork() {
                                                     if (el && !el.textContent) {
                                                         el.textContent = editComment; // Chỉ thiết lập nội dung ban đầu
                                                     }
+                                                    // Gán inputRef cho thẻ div
                                                 }}
                                                 className={cx('user-textfield')}
                                                 onInput={(e) => setEditComment(e.target.textContent)}
@@ -246,6 +261,8 @@ function DetailArtwork() {
                                             id="userTextFieldReply"
                                             className={cx('user-textfield')}
                                             contentEditable="true"
+                                            ref={inputRef}
+                                            tabIndex={-1}
                                             onInput={(e) => setReplyComments(e.target.textContent)}
                                             onKeyDown={(e) => {
                                                 if (e.key === 'Enter' && !e.shiftKey) {
@@ -265,8 +282,14 @@ function DetailArtwork() {
                                 </div>
                             </div>
                         </div>
-                        {cmt.replies && cmt.replies.length > 0 && (
-                            <div className={cx('replies')}>{renderComments(cmt.replies)}</div>
+                        {cmt.replies && cmt.replies.length > 0 && depth < 2 && (
+                            <div className={cx('replies-0')}>{renderComments(cmt.replies, depth + 2)}</div>
+                        )}
+                        {cmt.replies && cmt.replies.length > 0 && depth == 2 && (
+                            <div className={cx('replies-1')}>{renderComments(cmt.replies, depth + 2)}</div>
+                        )}
+                        {cmt.replies && cmt.replies.length > 0 && depth > 2 && (
+                            <div className={cx('replies-2')}>{renderComments(cmt.replies, 3)}</div>
                         )}
                     </div>
                 );
@@ -285,23 +308,45 @@ function DetailArtwork() {
                 <div className={cx('detail-favorite')}>
                     <div className={cx('options')}>
                         <div className={cx('option-1')}>
-                            <div className={cx('favorite')} onClick={toggleLike}>
-                                {likeClick ? (
-                                    <div className={cx('yes')}>
-                                        <MdFavorite />
-                                        <p>Favorited</p>
-                                    </div>
-                                ) : (
-                                    <div className={cx('no')}>
-                                        <MdFavoriteBorder />
-                                        <p>Add to favorites</p>
-                                    </div>
-                                )}
-                            </div>
-                            <div className={cx('comment')}>
-                                <BiComment />
-                                <p>Add to comments</p>
-                            </div>
+                            {!user?.user?.userID ? (
+                                <div className={cx('favorite')}>
+                                    <a href={`${HOSTING_URL}/signin`}>
+                                        <div className={cx('no')}>
+                                            <MdFavoriteBorder />
+                                            <p>Add to favorites</p>
+                                        </div>
+                                    </a>
+                                </div>
+                            ) : (
+                                <div className={cx('favorite')} onClick={toggleLike}>
+                                    {likeClick ? (
+                                        <div className={cx('yes')}>
+                                            <MdFavorite />
+                                            <p>Favorited</p>
+                                        </div>
+                                    ) : (
+                                        <div className={cx('no')}>
+                                            <MdFavoriteBorder />
+                                            <p>Add to favorites</p>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+
+                            <a
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    const target = document.getElementById('target');
+                                    if (target) {
+                                        target.scrollIntoView({ behavior: 'smooth' });
+                                    }
+                                }}
+                            >
+                                <div className={cx('comment')} onClick={focusTextField}>
+                                    <BiComment />
+                                    <p>Add to comments</p>
+                                </div>
+                            </a>
                         </div>
                         <div className={cx('option-2')}>
                             <div className={cx('download')}>
@@ -321,7 +366,7 @@ function DetailArtwork() {
                         <div className={cx('author')}>
                             <div className={cx('info')}>
                                 {loading ? null : (
-                                    <a href={`${HOSTING_URL}profile/${artwork && artwork.user.username}`}>
+                                    <a href={`${HOSTING_URL}/profile/${artwork && artwork.user.username}`}>
                                         <div className={cx('avatar')}>
                                             <img src={artwork && artwork.user.avatar} alt="avatar" />
                                         </div>
@@ -334,14 +379,14 @@ function DetailArtwork() {
                                     </div>
                                     <div className={cx('user')}>
                                         {loading ? null : (
-                                            <a href={`${HOSTING_URL}profile/${artwork && artwork.user.username}`}>
+                                            <a href={`${HOSTING_URL}/profile/${artwork && artwork.user.username}`}>
                                                 <p>
-                                                    by <span>{artwork && artwork.user.username}</span>
+                                                    by <span>{artwork && artwork.user.fullName}</span>
                                                 </p>
                                             </a>
                                         )}
 
-                                        {artwork && user && artwork.user.userID !== user.user.userID ? (
+                                        {artwork && user && artwork.user.userID !== user?.user?.userID ? (
                                             <div className={cx('follow-btn')}>
                                                 <p>Follow</p>
                                             </div>
@@ -399,37 +444,44 @@ function DetailArtwork() {
                 <div className={cx('detail-desc')}>
                     <div className={cx('desc')}>{artwork && artwork.description}</div>
                 </div>
-                <div className={cx('detail-comments')}>
+                <div className={cx('detail-comments')} id="target">
                     <div className={cx('comments')}>
                         <p>All comments</p>
-                        <div className={cx('user-comment')}>
-                            <a href={`${HOSTING_URL}profile/${user && user.user.username}`}>
-                                <div className={cx('user-avatar')}>
-                                    <img src={user && user.user.profile.avatar} alt="avatar" />
-                                </div>
-                            </a>
-                            <form className={cx('comment-form', 'textbox-comment')} onSubmit={handleCreateSubmit}>
-                                <div
-                                    id="userTextField"
-                                    className={cx('user-textfield')}
-                                    contentEditable="true"
-                                    onInput={(e) => setNewComment(e.target.textContent)}
-                                    onKeyDown={(e) => {
-                                        if (e.key === 'Enter' && !e.shiftKey) {
-                                            // Nếu nhấn Enter mà không giữ Shift
-                                            e.preventDefault(); // Ngăn xuống dòng
-                                            handleCreateSubmit(e); // Gửi form
-                                        }
-                                    }} // Lấy nội dung từ contentEditable
-                                ></div>
-                                <div className={cx('choose')}>
-                                    <div></div>
-                                    <button type="submit" className={cx('submit-button')}>
-                                        <IoMdSend />
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
+                        {user && user?.user?.userID ? (
+                            <div className={cx('user-comment')}>
+                                <a href={`${HOSTING_URL}/profile/${user && user.user.username}`}>
+                                    <div className={cx('user-avatar')}>
+                                        <img src={user && user.user.profile.avatar} alt="avatar" />
+                                    </div>
+                                </a>
+                                <form className={cx('comment-form', 'textbox-comment')} onSubmit={handleCreateSubmit}>
+                                    <div
+                                        id="userTextField"
+                                        className={cx('user-textfield')}
+                                        contentEditable="true"
+                                        ref={inputRef}
+                                        onInput={(e) => setNewComment(e.target.textContent)}
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter' && !e.shiftKey) {
+                                                // Nếu nhấn Enter mà không giữ Shift
+                                                e.preventDefault(); // Ngăn xuống dòng
+                                                handleCreateSubmit(e); // Gửi form
+                                            }
+                                        }} // Lấy nội dung từ contentEditable
+                                    ></div>
+                                    <div className={cx('choose')}>
+                                        <div></div>
+                                        <button type="submit" className={cx('submit-button')}>
+                                            <IoMdSend />
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        ) : (
+                            <div className={cx('check-login')}>
+                                <p>Please sign in to comment</p>
+                            </div>
+                        )}
 
                         <div className={cx('comments-container')}>{comments && renderComments(comments)}</div>
                     </div>

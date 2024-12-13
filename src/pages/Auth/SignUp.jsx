@@ -58,7 +58,7 @@ function SignUp() {
                 </form>
                 <div className={cx('other')}>
                     <p className={cx('have-account')}>Already have an account?</p>
-                    <a href={`${HOSTING_URL}signin`}>
+                    <a href={`${HOSTING_URL}/signin`}>
                         <div className={cx('sign-up')}>Sign In</div>
                     </a>
                 </div>

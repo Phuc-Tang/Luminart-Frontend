@@ -50,18 +50,18 @@
     align-content: center;
     text-align: center;
     border-radius: 30px;
-    border: 2px solid var(--highlight);
+    border: 2px solid var(--secondary);
 }
 
 .infomation .info .user-follow .follow-btn:hover {
-    background-color: var(--highlight);
+    background: var(--gradiant-primary);
 }
 
 .infomation .info .user-follow .follow-btn p {
     padding: 0 20px;
     font-size: 20px;
     font-weight: 500;
-    color: var(--highlight);
+    color: var(--secondary);
 }
 
 .infomation .info .user-follow .follow-btn:hover p {
@@ -104,7 +104,7 @@
     justify-content: center;
     border-radius: 30px;
     cursor: pointer;
-    background-color: var(--highlight);
+    background: var(--gradiant-primary);
 }
 
 .change-cover-button p {
@@ -190,7 +190,7 @@
 }
 
 .menu .tab-name.active {
-    box-shadow: 0px 2px 0px var(--highlight);
+    box-shadow: 0px 2px 0px var(--secondary);
 }
 
 .menu .edit-button {
@@ -200,5 +200,5 @@
 }
 
 .menu .edit-button.active {
-    color: var(--highlight);
+    color: var(--secondary);
 }

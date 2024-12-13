@@ -16,13 +16,30 @@ a {
     // Color
     --base: #121212;
     --upper: #181818;
-    --highlight: #9a00ff;
+    --highlight: #1c3a94;
+    --secondary: #497dbd;
     --error: #ff0073;
     --surface: #f2f2f2;
     --overlay: #e0e0e0;
     --hint: #b3b3b3;
 
-    --g-overlay-secondary-color-rgb: 12, 16, 21;
+    //Linear Color
+    --gradiant-primary: linear-gradient(
+        310deg,
+        rgba(122, 153, 217, 1) 0%,
+        rgba(73, 125, 189, 1) 46%,
+        rgba(28, 58, 148, 1) 100%
+    );
+    --gradiant-text-shadow: 1px 1px 2px rgba(122, 153, 217, 1), /* Bóng đổ đầu tiên */ 2px 2px 4px rgba(73, 125, 189, 1),
+        /* Bóng đổ thứ hai */ 3px 3px 6px rgba(28, 58, 148, 1);
+    --gradiant-color: -webkit-gradient(
+        linear,
+        left bottom,
+        left top,
+        color-stop(0.44, rgb(122, 153, 217)),
+        color-stop(0.72, rgb(73, 125, 189)),
+        color-stop(0.86, rgb(28, 58, 148))
+    );
 }
 
 /* Thay đổi màu nền và màu chữ cho các trường input khi autofill */
@@ -79,10 +96,10 @@ body {
 .custom-body-success {
     font-size: 16px;
     font-weight: 700;
-    color: greenyellow;
+    color: var(--secondary);
     text-align: left;
 }
 
 .custom-progress-success {
-    background-color: greenyellow !important;
+    background: var(--gradiant-primary) !important;
 }

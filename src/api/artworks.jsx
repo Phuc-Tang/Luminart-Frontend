@@ -7,6 +7,61 @@ export const api = axios.create({
     withCredentials: true
 });
 
+export const createArtwork = async (userID, title, file, description, link, taglist, subject) => {
+    try {
+        const response = await api.post(`/artwork/create-new-artwork`, {
+            userID,
+            title,
+            file,
+            description,
+            link,
+            taglist,
+            subject
+        });
+        return response.data;
+    } catch (error) {
+        if (error) {
+            return { error: error.response.data };
+        }
+    }
+    return { error: 'An error occurred while create artwork.' };
+};
+
+export const updateArtwork = async (userID, artID, title, file, description, link, taglist, subject) => {
+    try {
+        const response = await api.patch(`/artwork/update-artwork`, {
+            userID,
+            artID,
+            title,
+            file,
+            description,
+            link,
+            taglist,
+            subject
+        });
+        return response.data;
+    } catch (error) {
+        if (error) {
+            return { error: error.response.data };
+        }
+    }
+    return { error: 'An error occurred while update artwork.' };
+};
+
+export const deleteArtwork = async (artID) => {
+    try {
+        const response = await api.patch(`/artwork/update-artwork`, {
+            params: { artID }
+        });
+        return response.data;
+    } catch (error) {
+        if (error) {
+            return { error: error.response.data };
+        }
+    }
+    return { error: 'An error occurred while delete artwork.' };
+};
+
 export const getAllArtwork = async () => {
     try {
         const response = await api.get('/artwork/all-artwork');

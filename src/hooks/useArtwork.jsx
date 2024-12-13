@@ -1,4 +1,5 @@
 import {
+    createArtwork,
     getAllArtwork,
     getDetailArtwork,
     getPaginationArtwork,
@@ -6,8 +7,193 @@ import {
     unlikeArtwork,
     isLikedArtwork
 } from '../api/artworks';
+import { useUser } from './useUserInfo';
 import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
+
+export const useCreateArtwork = () => {
+    const { user } = useUser();
+    const [images, setImages] = useState([]);
+    const [selectedImage, setSelectedImage] = useState(null);
+    const [selectedIndex, setSelectedIndex] = useState(0);
+    const [creErrors, setCreErrors] = useState(null);
+    const [creArtworkValue, setCreArtworkValue] = useState({
+        userID: user?.user?.userID || '',
+        title: '',
+        file: [],
+        description: '',
+        link: '',
+        taglist: [],
+        subject: []
+    });
+
+    const totalImages = images.length;
+
+    useEffect(() => {
+        if (user?.user?.userID) {
+            setCreArtworkValue((prev) => ({ ...prev, userID: user.user.userID }));
+        }
+    }, [user]);
+
+    useEffect(() => {
+        return () => {
+            images.forEach((url) => URL.revokeObjectURL(url));
+        };
+    }, [images]);
+
+    const handleImageChange = (e) => {
+        const files = Array.from(e.target.files);
+        const newImages = files.map((file) => URL.createObjectURL(file));
+        setImages((prevImages) => [...prevImages, ...newImages]);
+
+        // Lưu file thật vào creArtworkValue
+        setCreArtworkValue((prev) => ({
+            ...prev,
+            file: [...prev.file, ...files] // Thêm các file vào mảng file
+        }));
+
+        if (newImages.length > 0 && !selectedImage) {
+            setSelectedImage(newImages[0]);
+            setSelectedIndex(0);
+        }
+    };
+
+    const handleSelectImage = (images, index) => {
+        setSelectedImage(images);
+        setSelectedIndex(index);
+    };
+
+    const handleRemoveImage = () => {
+        if (!selectedImage) return;
+
+        // Xóa ảnh khỏi danh sách images và cập nhật lại selectedImage
+        URL.revokeObjectURL(selectedImage);
+        const updatedImages = images.filter((image) => image !== selectedImage);
+        setImages(updatedImages);
+
+        // Nếu ảnh đã chọn bị xóa, chọn ảnh đầu tiên còn lại, nếu có
+        if (updatedImages.length > 0) {
+            setSelectedImage(updatedImages[0]);
+        } else {
+            setSelectedImage(null);
+            setSelectedIndex(0);
+        }
+
+        // Cập nhật lại creArtworkValue.file
+        const newFiles = creArtworkValue.file.filter((file) => URL.createObjectURL(file) !== selectedImage);
+        setCreArtworkValue((prev) => ({
+            ...prev,
+            file: newFiles
+        }));
+    };
+
+    const handleChange = (e) => {
+        const { name, value, files } = e.target;
+
+        // Xử lý riêng cho trường hợp 'file' để hỗ trợ nhiều ảnh
+        if (name === 'file') {
+            const newFiles = Array.from(files); // Chuyển FileList thành mảng
+            setCreArtworkValue((prev) => ({
+                ...prev,
+                file: newFiles // Lưu lại file mới được chọn
+            }));
+
+            // Gọi hàm uploadImages để tải ảnh lên server
+            uploadImages(newFiles); // Truyền mảng file vào hàm upload
+        } else {
+            setCreArtworkValue((prev) => ({
+                ...prev,
+                [name]: value // Cập nhật cho các trường không phải mảng
+            }));
+        }
+    };
+
+    const handleAddItem = (type, item) => {
+        setCreArtworkValue((prev) => {
+            if (prev[type].includes(item.trim())) return prev;
+            return {
+                ...prev,
+                [type]: [...prev[type], item.trim()]
+            };
+        });
+    };
+
+    const handleRemoveItem = (type, indexToRemove) => {
+        setCreArtworkValue((prev) => ({
+            ...prev,
+            [type]: prev[type].filter((_, index) => index !== indexToRemove)
+        }));
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        // Nếu không có lỗi
+        setCreErrors({});
+
+        try {
+            const formData = new FormData();
+            formData.append('userID', creArtworkValue.userID);
+            formData.append('title', creArtworkValue.title);
+            formData.append('description', creArtworkValue.description);
+            formData.append('link', creArtworkValue.link);
+            formData.append('taglist', JSON.stringify(creArtworkValue.taglist)); // Chuyển thành chuỗi nếu là mảng
+            formData.append('subject', JSON.stringify(creArtworkValue.subject)); // Chuyển thành chuỗi nếu là mảng
+
+            // Duyệt qua mảng file để thêm từng tệp vào FormData
+            creArtworkValue.file.forEach((file) => {
+                formData.append('file', file); // Backend cần xử lý mảng file[] từ FormData
+            });
+
+            const result = await createArtwork(formData);
+            if (!result.success) {
+                toast.error(result.message, {
+                    className: 'custom-toast-error',
+                    bodyClassName: 'custom-body-error',
+                    progressClassName: 'custom-progress-error'
+                }); // Hiển thị lỗi từ server
+                setCreErrors(result.error);
+            } else {
+                toast.success(result.message, {
+                    className: 'custom-toast-success',
+                    bodyClassName: 'custom-body-success',
+                    progressClassName: 'custom-progress-success'
+                }); // Hiển thị thành công
+                setCreArtworkValue({
+                    userID: user?.user?.userID || '',
+                    title: '',
+                    file: [],
+                    description: '',
+                    link: '',
+                    taglist: [],
+                    subject: []
+                });
+            }
+        } catch (error) {
+            console.error('Error creating artwork:', error);
+            toast.error('Something went wrong. Please try again later.', {
+                className: 'custom-toast-error',
+                bodyClassName: 'custom-body-error',
+                progressClassName: 'custom-progress-error'
+            });
+        }
+    };
+
+    return {
+        creArtworkValue,
+        creErrors,
+        handleChange,
+        handleAddItem,
+        handleRemoveItem,
+        handleSubmit,
+        images,
+        selectedImage,
+        selectedIndex,
+        totalImages,
+        handleRemoveImage,
+        handleImageChange,
+        handleSelectImage
+    };
+};
 
 export const useAllArtwork = () => {
     const [errors, setErrors] = useState(null);

@@ -16,7 +16,8 @@ const publicRoutes = [
     { path: '/profile/:username', component: Profile },
     { path: '/verify-email', component: Verify, layout: VerifyLayout },
     //Artwork routes
-    { path: '/artwork/:artID', component: Detail }
+    { path: '/artwork/:artID', component: Detail },
+    { path: '/artwork/upload/', component: Upload }
 ];
 
 export { publicRoutes };

@@ -38,7 +38,7 @@
     bottom: 20%;
     font-size: 38px;
     font-weight: bold;
-    text-shadow: 1px 2px 1px var(--highlight);
+    text-shadow: var(--gradiant-text-shadow);
 }
 
 .type {
@@ -60,7 +60,7 @@
     font-size: 20px;
     font-weight: 700;
     color: var(--overlay);
-    text-shadow: 1px 2px 1px var(--highlight);
+    text-shadow: var(--gradiant-text-shadow);
 }
 .type,
 .title,
@@ -87,7 +87,7 @@
     font-size: 60px;
     font-weight: bolder;
     display: inline-block;
-    text-shadow: 0 6px 5px #9a00ff;
+    text-shadow: var(--gradiant-text-shadow);
 }
 
 .discussion {
@@ -98,7 +98,10 @@
 
 .luminart {
     font-weight: bolder;
-    color: var(--highlight);
+    background: var(--gradiant-primary);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 .text {
@@ -118,7 +121,7 @@
     align-items: center;
     justify-content: center;
     border-radius: 5px;
-    background-color: var(--highlight);
+    background: var(--gradiant-primary);
 }
 
 .reveal-text {
@@ -131,7 +134,7 @@
     position: relative;
     display: flex;
     justify-content: center;
-    background-color: var(--highlight);
+    background: var(--gradiant-primary);
 }
 
 .frame-rank img {
