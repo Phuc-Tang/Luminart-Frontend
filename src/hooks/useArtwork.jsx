@@ -10,9 +10,12 @@ import {
 import { useUser } from './useUserInfo';
 import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
+import { validateArtwork } from '../utils/validators/artworkValidation';
 
 export const useCreateArtwork = () => {
     const { user } = useUser();
+    const navigate = useNavigate();
     const [images, setImages] = useState([]);
     const [selectedImage, setSelectedImage] = useState(null);
     const [selectedIndex, setSelectedIndex] = useState(0);
@@ -20,13 +23,13 @@ export const useCreateArtwork = () => {
     const [creArtworkValue, setCreArtworkValue] = useState({
         userID: user?.user?.userID || '',
         title: '',
-        file: [],
+        files: [],
         description: '',
         link: '',
         taglist: [],
-        subject: []
+        subject: [],
+        status: 1
     });
-
     const totalImages = images.length;
 
     useEffect(() => {
@@ -35,22 +38,35 @@ export const useCreateArtwork = () => {
         }
     }, [user]);
 
-    useEffect(() => {
-        return () => {
-            images.forEach((url) => URL.revokeObjectURL(url));
-        };
-    }, [images]);
-
     const handleImageChange = (e) => {
-        const files = Array.from(e.target.files);
-        const newImages = files.map((file) => URL.createObjectURL(file));
+        const filesImage = Array.from(e.target.files);
+        // Kiểm tra tổng số ảnh sau khi thêm
+        if (images.length + filesImage.length > 10) {
+            toast.error('You can only choose up to 10 images!', {
+                className: 'custom-toast-error',
+                bodyClassName: 'custom-body-error',
+                progressClassName: 'custom-progress-error'
+            });
+            return; // Dừng lại nếu tổng số ảnh vượt quá 10
+        }
+        const newImages = filesImage.map((files) => URL.createObjectURL(files));
         setImages((prevImages) => [...prevImages, ...newImages]);
 
         // Lưu file thật vào creArtworkValue
         setCreArtworkValue((prev) => ({
             ...prev,
-            file: [...prev.file, ...files] // Thêm các file vào mảng file
+            files: [...prev.files, ...filesImage] // Thêm các file vào mảng file
         }));
+
+        if (images > 10) {
+            // Hiển thị thông báo lỗi nếu tổng số ảnh vượt quá 10
+            toast.error('You can only choose up to 10 images!', {
+                className: 'custom-toast-error',
+                bodyClassName: 'custom-body-error',
+                progressClassName: 'custom-progress-error'
+            });
+            return;
+        }
 
         if (newImages.length > 0 && !selectedImage) {
             setSelectedImage(newImages[0]);
@@ -58,32 +74,46 @@ export const useCreateArtwork = () => {
         }
     };
 
-    const handleSelectImage = (images, index) => {
-        setSelectedImage(images);
+    const handleSelectImage = (image, index) => {
+        setSelectedImage(image);
         setSelectedIndex(index);
     };
 
     const handleRemoveImage = () => {
         if (!selectedImage) return;
 
+        // Tìm file thật trong creArtworkValue.files dựa vào URL
+        const selectedFileIndex = creArtworkValue.files.findIndex(
+            (files) => URL.createObjectURL(files) === selectedImage
+        );
+
         // Xóa ảnh khỏi danh sách images và cập nhật lại selectedImage
-        URL.revokeObjectURL(selectedImage);
         const updatedImages = images.filter((image) => image !== selectedImage);
         setImages(updatedImages);
 
-        // Nếu ảnh đã chọn bị xóa, chọn ảnh đầu tiên còn lại, nếu có
+        URL.revokeObjectURL(selectedImage);
+
+        // Cập nhật lại selectedImage sau khi xóa
         if (updatedImages.length > 0) {
-            setSelectedImage(updatedImages[0]);
+            // Cập nhật selectedImage dựa trên chỉ số đang chọn
+            if (selectedIndex < updatedImages.length) {
+                setSelectedImage(updatedImages[selectedIndex]);
+            } else {
+                // Nếu chỉ số lớn hơn mảng còn lại, chọn ảnh cuối cùng
+                setSelectedImage(updatedImages[updatedImages.length - 1]);
+                setSelectedIndex(updatedImages.length - 1);
+            }
         } else {
             setSelectedImage(null);
             setSelectedIndex(0);
         }
 
-        // Cập nhật lại creArtworkValue.file
-        const newFiles = creArtworkValue.file.filter((file) => URL.createObjectURL(file) !== selectedImage);
+        // Cập nhật lại creArtworkValue.files, xóa ảnh bị xóa
+        const newFiles = [...creArtworkValue.files];
+        newFiles.splice(selectedFileIndex, 1); // Xóa ảnh khỏi mảng files
         setCreArtworkValue((prev) => ({
             ...prev,
-            file: newFiles
+            files: newFiles // Cập nhật lại mảng files
         }));
     };
 
@@ -95,7 +125,7 @@ export const useCreateArtwork = () => {
             const newFiles = Array.from(files); // Chuyển FileList thành mảng
             setCreArtworkValue((prev) => ({
                 ...prev,
-                file: newFiles // Lưu lại file mới được chọn
+                files: newFiles // Lưu lại file mới được chọn
             }));
 
             // Gọi hàm uploadImages để tải ảnh lên server
@@ -109,11 +139,12 @@ export const useCreateArtwork = () => {
     };
 
     const handleAddItem = (type, item) => {
+        const validItem = item.replace(/[^a-zA-Z0-9\s]/g, '');
         setCreArtworkValue((prev) => {
-            if (prev[type].includes(item.trim())) return prev;
+            if (prev[type].includes(validItem.trim())) return prev;
             return {
                 ...prev,
-                [type]: [...prev[type], item.trim()]
+                [type]: [...prev[type], validItem.trim()]
             };
         });
     };
@@ -125,10 +156,35 @@ export const useCreateArtwork = () => {
         }));
     };
 
+    const handleStatusChange = (e) => {
+        const newStatus = parseInt(e.target.value, 10);
+        setCreArtworkValue((prevState) => ({
+            ...prevState,
+            status: newStatus
+        }));
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+        const validationErrors = validateArtwork(
+            creArtworkValue.title,
+            creArtworkValue.files,
+            creArtworkValue.description,
+            creArtworkValue.taglist,
+            creArtworkValue.subject,
+            creArtworkValue.status
+        );
+        if (Object.keys(validationErrors).length > 0) {
+            setCreErrors(validationErrors);
+            toast.error(Object.values(validationErrors)[0], {
+                className: 'custom-toast-error',
+                bodyClassName: 'custom-body-error',
+                progressClassName: 'custom-progress-error'
+            }); // Hiển thị lỗi đầu tiên
+            return;
+        }
         // Nếu không có lỗi
-        setCreErrors({});
+        setCreErrors();
 
         try {
             const formData = new FormData();
@@ -138,22 +194,24 @@ export const useCreateArtwork = () => {
             formData.append('link', creArtworkValue.link);
             formData.append('taglist', JSON.stringify(creArtworkValue.taglist)); // Chuyển thành chuỗi nếu là mảng
             formData.append('subject', JSON.stringify(creArtworkValue.subject)); // Chuyển thành chuỗi nếu là mảng
+            formData.append('status', creArtworkValue.status);
 
             // Duyệt qua mảng file để thêm từng tệp vào FormData
-            creArtworkValue.file.forEach((file) => {
-                formData.append('file', file); // Backend cần xử lý mảng file[] từ FormData
+            creArtworkValue.files.forEach((file) => {
+                formData.append('files', file); // Backend cần xử lý mảng file[] từ FormData
             });
 
-            const result = await createArtwork(formData);
-            if (!result.success) {
-                toast.error(result.message, {
+            const response = await createArtwork(formData);
+            if (!response.success) {
+                setCreErrors(response.error || {});
+                toast.error(response.message, {
                     className: 'custom-toast-error',
                     bodyClassName: 'custom-body-error',
                     progressClassName: 'custom-progress-error'
                 }); // Hiển thị lỗi từ server
-                setCreErrors(result.error);
+                setCreErrors(response.error);
             } else {
-                toast.success(result.message, {
+                toast.success(response.message, {
                     className: 'custom-toast-success',
                     bodyClassName: 'custom-body-success',
                     progressClassName: 'custom-progress-success'
@@ -161,12 +219,14 @@ export const useCreateArtwork = () => {
                 setCreArtworkValue({
                     userID: user?.user?.userID || '',
                     title: '',
-                    file: [],
+                    files: [],
                     description: '',
                     link: '',
                     taglist: [],
-                    subject: []
+                    subject: [],
+                    status: 1
                 });
+                setTimeout(() => navigate('/'), 4000);
             }
         } catch (error) {
             console.error('Error creating artwork:', error);
@@ -191,7 +251,8 @@ export const useCreateArtwork = () => {
         totalImages,
         handleRemoveImage,
         handleImageChange,
-        handleSelectImage
+        handleSelectImage,
+        handleStatusChange
     };
 };
 

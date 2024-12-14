@@ -103,3 +103,13 @@ body {
 .custom-progress-success {
     background: var(--gradiant-primary) !important;
 }
+
+::-webkit-scrollbar {
+    width: 8px;
+    background-color: var(--upper);
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background-image: var(--gradiant-color);
+}

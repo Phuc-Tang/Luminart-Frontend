@@ -6,6 +6,17 @@
     gap: 20px;
 }
 
+.swiper-pagination {
+    position: absolute;
+    bottom: 20px; /* Điều chỉnh vị trí của pagination */
+    left: 0;
+    right: 0;
+    text-align: center;
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+}
+
 .frame .detail-left,
 .frame .detail-right {
     height: auto;
@@ -24,16 +35,20 @@
 .frame .detail-left .detail-artwork {
     height: 700px;
     border-radius: 5px;
-    padding: 40px 60px;
     background-color: var(--upper);
     background: linear-gradient(45deg, #000000, #1a1a1a, #2e2e2e);
+}
+
+.frame .detail-left .detail-artwork .artwork {
+    width: 100%;
+    align-content: center;
 }
 
 .frame .detail-left .detail-artwork img {
     width: 100%;
     height: 100%;
     object-fit: contain;
-    box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
+    // box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
 }
 
 .frame .detail-left .detail-author .interact {
@@ -489,110 +504,94 @@
 // Upload Artwork
 
 .frame-update {
-    overflow: hidden;
-
-    .frame-left-upload {
+    display: flex;
+    margin: 90px 200px 0;
+    flex-direction: column !important;
+    .title-display p {
+        font-weight: bolder;
+    }
+    .update-form {
         position: relative;
-        gap: 10px;
-        display: flex;
-        height: calc(100vh - 90px);
-        flex-direction: column;
-
-        .image-option {
-            position: absolute;
+        display: grid;
+        grid-template-columns: 1000px auto;
+        gap: 20px;
+        .frame-left-upload {
+            position: relative;
+            gap: 10px;
             display: flex;
             width: 100%;
-            padding: 10px 40px;
-            justify-content: space-between;
+            flex-direction: column;
 
-            .image-count,
-            .image-remove {
+            .image-option {
+                position: absolute;
                 display: flex;
-                font-size: 18px;
-                font-weight: 500;
-                align-items: center;
-                gap: 5px;
-                cursor: pointer;
-            }
-        }
-
-        .upload-artwork {
-            background: var(--upper) !important;
-            border: 2px dashed var(--hint);
-            border-image: linear-gradient(
-                    310deg,
-                    rgba(122, 153, 217, 1) 0%,
-                    rgba(73, 125, 189, 1) 46%,
-                    rgba(28, 58, 148, 1) 100%
-                )
-                1;
-        }
-
-        .artwork-gallery {
-            display: flex;
-            width: 100%;
-            height: 150px;
-            border-radius: 5px;
-
-            .swiper-container {
                 width: 100%;
-            }
+                padding: 10px 40px;
+                justify-content: space-between;
 
-            .thumbnail-wrapper {
-                width: 150px;
-                height: 150px;
-                cursor: pointer;
-                border-radius: 5px;
-                background-color: var(--upper);
-
-                .thumbnail {
-                    width: 100%;
-                    height: 100%;
-                    object-fit: cover;
-                    border: 2px dashed var(--hint);
-                    border-image: linear-gradient(
-                            310deg,
-                            rgba(122, 153, 217, 1) 0%,
-                            rgba(73, 125, 189, 1) 46%,
-                            rgba(28, 58, 148, 1) 100%
-                        )
-                        1;
+                .image-count,
+                .image-remove {
+                    display: flex;
+                    font-size: 18px;
+                    font-weight: 500;
+                    align-items: center;
+                    gap: 5px;
+                    cursor: pointer;
                 }
             }
-        }
-    }
 
-    .frame-right-upload {
-        margin: 0;
-        padding: 0;
-        height: calc(100vh - 90px);
-        overflow: hidden;
-        box-sizing: border-box;
+            .upload-artwork {
+                height: 550px;
+                background: var(--upper) !important;
+                border: 2px dashed var(--hint);
+                border-image: linear-gradient(
+                        310deg,
+                        rgba(122, 153, 217, 1) 0%,
+                        rgba(73, 125, 189, 1) 46%,
+                        rgba(28, 58, 148, 1) 100%
+                    )
+                    1;
+            }
 
-        .artwork-textfield {
-            flex: 1;
-            height: 100%;
-            overflow-y: auto;
-            box-sizing: border-box;
+            .artwork-gallery {
+                display: flex;
+                width: 100%;
+                height: 150px;
+                border-radius: 5px;
 
-            .form-field,
-            .form-subject {
+                .swiper-container {
+                    width: 100%;
+                }
+
+                .thumbnail-wrapper {
+                    width: 150px;
+                    height: 150px;
+                    cursor: pointer;
+                    border-radius: 5px;
+                    background-color: var(--upper);
+
+                    .thumbnail {
+                        width: 100%;
+                        height: 100%;
+                        object-fit: cover;
+                        border: 2px dashed var(--hint);
+                        border-image: linear-gradient(
+                                310deg,
+                                rgba(122, 153, 217, 1) 0%,
+                                rgba(73, 125, 189, 1) 46%,
+                                rgba(28, 58, 148, 1) 100%
+                            )
+                            1;
+                    }
+                }
+            }
+
+            .form-field {
                 width: 100%;
                 padding: 20px 10px;
                 margin-bottom: 20px;
                 border-radius: 5px;
                 background-color: var(--upper);
-
-                .title,
-                .link {
-                    padding: 0 10px;
-                }
-
-                .choose-up {
-                    margin-top: 10px;
-                    font-size: 14px;
-                    align-content: center;
-                }
 
                 label {
                     display: block;
@@ -628,110 +627,239 @@
                     resize: none;
                     padding: 10px;
                 }
-
-                .subject-input-container,
-                .tag-input-container {
-                    display: flex;
-                    flex-wrap: wrap;
-                    align-items: center;
-                    color: var(--surface);
-                    min-height: 40px;
-                    cursor: text;
-                    padding: 0 5px;
-                    border: 1px solid var(--secondary);
-                }
-
-                .subject,
-                .tag {
-                    display: flex;
-                    align-items: center;
-                    background-color: #333;
-                    padding: 5px 10px;
-                    border-radius: 4px;
-                    font-size: 14px;
-                    margin-right: 5px;
-                    color: var(--surface);
-                }
-
-                .remove-subject,
-                .remove-tag {
-                    margin-left: 5px;
-                    background: none;
-                    border: none;
-                    color: #b3b3b3;
-                    cursor: pointer;
-                    font-size: 14px;
-                }
-
-                .remove-subject:hover,
-                .remove-tag:hover {
-                    color: #f00;
-                }
-
-                .subject-input,
-                .tag-input {
-                    flex: 1;
-                    border: none;
-                    outline: none;
-                    background-color: transparent;
-                    color: #e0e0e0;
-                    font-size: 14px;
-                    padding: 5px;
-                    min-width: 100px;
-                }
             }
+        }
 
-            .form-subject {
-                padding: 20px 10px !important;
-                height: 350px;
-                overflow: hidden;
+        .frame-right-upload {
+            .artwork-textfield {
+                flex: 1;
+                height: 100%;
+                overflow-y: auto;
                 box-sizing: border-box;
-                .form-subject-frame {
-                    flex: 1;
-                    height: 100%;
-                    overflow-y: auto;
-                    box-sizing: border-box;
-                    .subject-item {
-                        position: relative;
-                        margin-bottom: 5px;
-                        width: 100%;
-                        height: 50px;
-                        background-color: var(--upper);
+
+                .suggest {
+                    border-left: 5px solid var(--secondary);
+
+                    .suggest-title,
+                    .suggest-content,
+                    .suggest-choose-up {
+                        font-size: 16px;
                     }
-                    .subject-item img {
-                        width: 100%;
-                        height: 100%;
-                        object-fit: cover;
-                        opacity: 0.5;
+
+                    .suggest-title {
+                        font-weight: bold;
+                        color: var(--secondary);
                     }
-                    .subject-item p {
-                        position: absolute;
+
+                    .suggest-content {
+                        margin: 10px 0;
+                    }
+                }
+                .suggest,
+                .form-field,
+                .form-subject {
+                    width: 100%;
+                    padding: 20px 10px;
+                    margin-bottom: 20px;
+                    border-radius: 5px;
+                    background-color: var(--upper);
+
+                    .title,
+                    .link {
+                        padding: 0 10px;
+                    }
+
+                    .choose-up {
+                        margin-top: 10px;
+                        font-size: 14px;
+                        align-content: center;
+                    }
+
+                    label {
+                        display: block;
+                        width: 100%;
+                        padding: 5px 5px;
                         font-size: 16px;
                         font-weight: 500;
-                        z-index: 10;
-                        top: 50%;
-                        left: 50%;
-                        transform: translate(-50%, -50%);
-                        text-align: center;
+                        background: var(--gradiant-primary);
+                    }
+                    option,
+                    select,
+                    input,
+                    textarea {
+                        width: 100%;
+                        height: 40px;
+                        border: none;
+                        padding: 0 10px;
+                        font-size: 16px;
+                        color: var(--surface);
+                        padding: 5px 0;
+                        caret-color: var(--secondary);
+                        background: transparent;
+                        border: 1px solid var(--secondary);
+                    }
+
+                    select:focus,
+                    input:focus,
+                    textarea:focus {
+                        font-size: 16px;
+                        outline: none;
+                    }
+
+                    textarea {
+                        height: 250px;
+                        resize: none;
+                        padding: 10px;
+                    }
+
+                    select {
+                        padding: 0 5px;
+                    }
+
+                    select:focus {
+                        background: var(--upper); /* Màu nền khi hover */
+                    }
+
+                    .subject-input-container,
+                    .tag-input-container {
+                        display: flex;
+                        flex-wrap: wrap;
+                        align-items: center;
+                        color: var(--surface);
+                        min-height: 40px;
+                        cursor: text;
+                        padding: 0 5px;
+                        border: 1px solid var(--secondary);
+                    }
+
+                    .subject,
+                    .tag {
+                        display: flex;
+                        align-items: center;
+                        background-color: #333;
+                        padding: 5px 10px;
+                        border-radius: 4px;
+                        font-size: 14px;
+                        margin-right: 5px;
+                        color: var(--surface);
+                    }
+
+                    .remove-subject,
+                    .remove-tag {
+                        margin-left: 5px;
+                        background: none;
+                        border: none;
+                        color: #b3b3b3;
+                        cursor: pointer;
+                        font-size: 14px;
+                    }
+
+                    .remove-subject:hover,
+                    .remove-tag:hover {
+                        color: #f00;
+                    }
+
+                    .subject-input,
+                    .tag-input {
+                        flex: 1;
+                        border: none;
+                        outline: none;
+                        background-color: transparent;
+                        color: #e0e0e0;
+                        font-size: 14px;
+                        padding: 5px;
+                        min-width: 100px;
+                    }
+                }
+
+                .form-subject {
+                    padding: 20px 10px !important;
+                    height: 350px;
+                    overflow: hidden;
+                    box-sizing: border-box;
+                    .form-subject-frame {
+                        flex: 1;
+                        height: 100%;
+                        overflow-y: auto;
+                        box-sizing: border-box;
+                        .subject-item {
+                            position: relative;
+                            margin-bottom: 5px;
+                            width: 100%;
+                            height: 50px;
+                            background-color: var(--upper);
+                        }
+                        .subject-item img {
+                            width: 100%;
+                            height: 100%;
+                            object-fit: cover;
+                            opacity: 0.5;
+                        }
+                        .subject-item p {
+                            position: absolute;
+                            font-size: 16px;
+                            font-weight: 500;
+                            z-index: 10;
+                            top: 50%;
+                            left: 50%;
+                            transform: translate(-50%, -50%);
+                            text-align: center;
+                        }
+                    }
+                }
+
+                .handle-btn {
+                    display: flex;
+                    gap: 10px;
+                    justify-content: flex-end;
+                    margin: 0 10px;
+                    .review {
+                        border: 2px solid var(--secondary);
+                    }
+
+                    .submit {
+                        background: var(--gradiant-primary) !important;
+                    }
+
+                    button {
+                        width: 150px;
+                        height: 50px;
+                        border: none;
+                        cursor: pointer;
+                        border-radius: 5px;
+                        // margin-bottom: 5px;
+                        background-color: transparent;
+
+                        p {
+                            font-size: 18px;
+                            font-weight: bold;
+                            color: var(--surface);
+                        }
                     }
                 }
             }
         }
-        .form-subject-frame::-webkit-scrollbar,
-        .artwork-textfield::-webkit-scrollbar {
-            width: 8px;
-            background-color: var(--upper);
-        }
-        .form-subject-frame::-webkit-scrollbar-thumb,
-        .artwork-textfield::-webkit-scrollbar-thumb {
-            border-radius: 10px;
-            background-image: var(--gradiant-color);
-        }
+    }
+
+    .modal {
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        z-index: 100;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        overflow: hidden;
+        background-color: rgba(0, 0, 0, 0.5);
     }
 }
 
-.artwork {
+.artwork-review {
     align-content: center;
+    padding: 30px;
 
     .image-input {
         width: 750px;
@@ -746,4 +874,8 @@
             font-size: 50px;
         }
     }
+}
+
+.error {
+    border: 1px solid var(--error) !important;
 }

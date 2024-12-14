@@ -30,11 +30,11 @@ function Home() {
                         <div>No artworks found</div> // Hiển thị khi không có artwork
                     ) : (
                         artworks.map((art) => {
-                            return (
+                            return art?.status === 1 ? (
                                 <a href={`/artwork/${art.artID}`} key={art.artID}>
                                     <div className={cx('frame-artwork')}>
                                         <div className={cx('background')}>
-                                            <img loading="lazy" src={`${art.art}`} alt={art.title} />
+                                            <img loading="lazy" src={`${art.art[0]}`} alt={art.title} />
                                             <div className={cx('overlay')}></div>
                                         </div>
                                         <div className={cx('hover')}>
@@ -50,7 +50,7 @@ function Home() {
                                         </div>
                                     </div>
                                 </a>
-                            );
+                            ) : null;
                         })
                     )}
                 </div>

@@ -26,8 +26,6 @@ function Profile() {
     const position = userInfo && userInfo.profile.position;
     const follower = userInfo && userInfo.profile.followers_count;
     const following = userInfo && userInfo.profile.following_count;
-    console.log('data user', profileUser && profileUser.user.userID);
-    console.log('data user login', user && user.user.userID);
 
     const tabMenu = [
         { id: 1, tab: 'Overview', component: <Overview customSection={customSection} /> },
@@ -46,7 +44,8 @@ function Profile() {
                     <div className={cx('info')}>
                         <div className={cx('user-follow')}>
                             <p className={cx('username')}>{fullName === null ? username : fullName}</p>
-                            {user && profileUser && user.user.userID === profileUser.user.userID ? null : (
+                            {!user || !user.user ? null : profileUser &&
+                              user.user.userID === profileUser.user.userID ? null : (
                                 <div className={cx('follow-btn')}>
                                     <p>Follow</p>
                                 </div>

@@ -1,6 +1,7 @@
 import classNames from 'classnames/bind';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Slide, ToastContainer } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 import styles from '../../styles/pages/Artwork.module.scss';
 import { useDetailArtwork } from '../../hooks/useArtwork';
 import { useParams } from 'react-router-dom';
@@ -13,12 +14,19 @@ import { useUser } from '../../hooks/useUserInfo';
 import { useLikeArtwork } from '../../hooks/useArtwork';
 import { useArtworkComments } from '../../hooks/useComment';
 import { handleFullScreen } from '../../utils/fullscreen/fullscreen';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation, Pagination } from 'swiper/modules';
+import 'swiper/scss';
+import 'swiper/scss/navigation';
+import 'swiper/scss/pagination';
 
 const cx = classNames.bind(styles);
 const HOSTING_URL = import.meta.env.VITE_HOSTING_URL;
 
 function DetailArtwork() {
     const { enterFullscreen, exitFullscreen, elementRef } = handleFullScreen();
+    const inputRef = useRef(null);
+    const navigate = useNavigate();
     const [activeCmtOption, setActiveCmtOption] = useState(null);
     const [activeDelCmt, setActiveDelCmt] = useState(null);
     const [activeRepCmt, setActiveRepCmt] = useState(null);
@@ -37,11 +45,27 @@ function DetailArtwork() {
         userID
     );
 
-    const inputRef = useRef(null);
+    useEffect(() => {
+        // Kiểm tra khi artwork đã được tải xong
+        if (artwork) {
+            // Nếu status = 0, điều hướng tới trang 404
+            if (artwork.status === 0) {
+                navigate('/', { replace: true });
+            }
+        }
+    }, [artwork, navigate]);
+
+    if (loading) {
+        return <div>Loading...</div>;
+    }
+
+    if (errors) {
+        return <div>Error loading artwork details</div>;
+    }
 
     const focusTextField = () => {
         if (inputRef.current) {
-            inputRef.current.focus(); // Đặt focus vào div nhập liệu
+            inputRef.current.focus();
         }
     };
 
@@ -302,7 +326,21 @@ function DetailArtwork() {
             <div className={cx('detail-left')}>
                 <div className={cx('detail-artwork')} ref={elementRef}>
                     <div className={cx('artwork')}>
-                        {loading ? null : <img src={artwork && artwork.art} alt={artwork && artwork.title} />}
+                        <Swiper
+                            modules={[Navigation, Pagination]}
+                            navigation
+                            pagination={{ clickable: true }}
+                            slidesPerView={1}
+                            spaceBetween={10}
+                            className={cx('swiper-container')}
+                            style={{ width: '100%', height: '600px' }}
+                        >
+                            {artwork?.art.map((art, index) => (
+                                <SwiperSlide key={index}>
+                                    {loading ? null : <img src={art} alt={art?.title} />}
+                                </SwiperSlide>
+                            ))}
+                        </Swiper>
                     </div>
                 </div>
                 <div className={cx('detail-favorite')}>

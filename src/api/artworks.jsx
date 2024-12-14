@@ -7,37 +7,29 @@ export const api = axios.create({
     withCredentials: true
 });
 
-export const createArtwork = async (userID, title, file, description, link, taglist, subject) => {
+export const createArtwork = async (formData) => {
     try {
-        const response = await api.post(`/artwork/create-new-artwork`, {
-            userID,
-            title,
-            file,
-            description,
-            link,
-            taglist,
-            subject
+        const response = await api.post(`/artwork/create-new-artwork`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data' // Đặt header cho FormData
+            }
         });
+        console.log(response.data);
         return response.data;
     } catch (error) {
-        if (error) {
+        if (error.response) {
             return { error: error.response.data };
         }
+        return { error: 'An error occurred while creating artwork.' };
     }
-    return { error: 'An error occurred while create artwork.' };
 };
 
-export const updateArtwork = async (userID, artID, title, file, description, link, taglist, subject) => {
+export const updateArtwork = async (formData) => {
     try {
-        const response = await api.patch(`/artwork/update-artwork`, {
-            userID,
-            artID,
-            title,
-            file,
-            description,
-            link,
-            taglist,
-            subject
+        const response = await api.patch(`/artwork/update-artwork`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data' // Đặt header cho FormData
+            }
         });
         return response.data;
     } catch (error) {
@@ -99,6 +91,20 @@ export const getDetailArtwork = async (artID) => {
         }
     }
     return { error: 'An error occurred while get artwork.' };
+};
+
+export const changeStatusArtwork = async (artID, status) => {
+    try {
+        const response = await api.patch(`/artwork/change-status-artwork/${artID}`, {
+            status
+        });
+        return response.data;
+    } catch (error) {
+        if (error) {
+            return { error: error.response.data };
+        }
+    }
+    return { error: 'An error occurred while update status artwork.' };
 };
 
 export const likeArtwork = async (contentID) => {
