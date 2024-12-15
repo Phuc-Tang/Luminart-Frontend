@@ -1,6 +1,4 @@
-// .frame {
-//     margin-top: 10px;
-// }
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Rubik+Wet+Paint&display=swap');
 
 .frame-tag {
     align-content: center;
@@ -25,6 +23,7 @@
     width: 100%; /* Đảm bảo grid chiếm toàn bộ chiều rộng container */
     box-sizing: border-box; /* Tính toán khoảng cách đúng đắn */
     overflow-y: hidden;
+    transition: all 0.5s ease-in-out;
 }
 
 .frame-artwork {
@@ -36,12 +35,13 @@
     align-items: flex-end;
 }
 
-.frame-artwork img {
+.frame-artwork .img {
     width: 100%;
     height: 260px;
     object-fit: cover;
     object-position: top;
     display: block;
+    max-width: 100%;
 }
 
 .background {
@@ -120,4 +120,43 @@
     margin-top: 5px;
     font-size: 13px;
     font-weight: 600;
+}
+
+.splash {
+    width: 100%;
+    height: 100%;
+    // position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: var(--base);
+    z-index: 1;
+}
+
+.splash-content {
+    display: flex;
+    align-items: center;
+    color: white;
+    font-size: 1.5rem;
+    flex-direction: column;
+    gap: 10px;
+
+    p {
+        font-size: 20px;
+        font-weight: bold;
+    }
+}
+
+.spinner {
+    animation: spin 1s linear infinite;
+    margin-right: 10px;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }

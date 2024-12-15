@@ -98,6 +98,22 @@ export const getProfile = async (username) => {
     }
 };
 
+export const updateProfile = async (formData) => {
+    try {
+        const response = api.patch(`/user/update-profile`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data' // Đặt header cho FormData
+            }
+        });
+        return response.data;
+    } catch (error) {
+        if (error.response) {
+            return { error: error.response.data };
+        }
+        return { error: 'An error occurred while update profile.' };
+    }
+};
+
 export const verifyEmail = async (token) => {
     try {
         const response = await axios.get(`${API_URL}/auth/verify-email?token=${token}`, {

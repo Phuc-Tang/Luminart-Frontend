@@ -45,7 +45,7 @@ function Profile() {
                         <div className={cx('user-follow')}>
                             <p className={cx('username')}>{fullName === null ? username : fullName}</p>
                             {!user || !user.user ? null : profileUser &&
-                              user.user.userID === profileUser.user.userID ? null : (
+                              user?.user?.userID === profileUser?.user?.userID ? null : (
                                 <div className={cx('follow-btn')}>
                                     <p>Follow</p>
                                 </div>

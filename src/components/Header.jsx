@@ -8,7 +8,7 @@ import { GrUpgrade } from 'react-icons/gr';
 import { FaSignOutAlt, FaImages, FaUserCircle } from 'react-icons/fa';
 import { TbLogin2, TbLogin } from 'react-icons/tb';
 import { IoMdSettings } from 'react-icons/io';
-import { MdLanguage } from 'react-icons/md';
+import { MdLanguage, MdEdit } from 'react-icons/md';
 import { RiColorFilterFill } from 'react-icons/ri';
 import { useUser } from '../hooks/useUserInfo';
 import { useState, useEffect } from 'react';
@@ -80,6 +80,12 @@ function Header() {
                                             <BiStreetView />
                                         </p>
                                         <p>My Profile</p>
+                                    </a>
+                                    <a href={`${HOSTING_URL}/profile/update`} className={cx('tab')}>
+                                        <p>
+                                            <MdEdit />
+                                        </p>
+                                        <p>Edit Profile</p>
                                     </a>
                                     <div className={cx('tab')}>
                                         <p>

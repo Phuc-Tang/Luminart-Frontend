@@ -3,13 +3,14 @@ import { useState, useRef, useEffect } from 'react';
 import { Slide, ToastContainer } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import styles from '../../styles/pages/Artwork.module.scss';
-import { useDetailArtwork } from '../../hooks/useArtwork';
+import { useChangeStatusArtwork, useDeleteArtwork, useDetailArtwork } from '../../hooks/useArtwork';
 import { useParams } from 'react-router-dom';
 import { formatDate } from '../../utils/string/stringUtils';
 import { MdFavoriteBorder, MdFavorite, MdFullscreen, MdDelete, MdEdit, MdCancel } from 'react-icons/md';
 import { BiSolidComment, BiComment } from 'react-icons/bi';
 import { BsThreeDotsVertical, BsThreeDots } from 'react-icons/bs';
 import { IoMdDownload, IoMdSend } from 'react-icons/io';
+import { FaEyeSlash, FaEye } from 'react-icons/fa';
 import { useUser } from '../../hooks/useUserInfo';
 import { useLikeArtwork } from '../../hooks/useArtwork';
 import { useArtworkComments } from '../../hooks/useComment';
@@ -31,6 +32,8 @@ function DetailArtwork() {
     const [activeDelCmt, setActiveDelCmt] = useState(null);
     const [activeRepCmt, setActiveRepCmt] = useState(null);
     const [editCmtOption, setEditCmtOption] = useState(null);
+    const [delArtworkDetail, setDelArtworkDetail] = useState(null);
+    const [handleArtwork, setHandleArtwork] = useState(false);
     const { artID } = useParams();
     const { user } = useUser();
     const { artwork, loading, errors } = useDetailArtwork(artID);
@@ -40,16 +43,23 @@ function DetailArtwork() {
     const [newComment, setNewComment] = useState('');
     const [editComment, setEditComment] = useState('');
     const [replyComments, setReplyComments] = useState('');
+    const { statusLoading, statusError, statusArtwork, data, changeStatus } = useChangeStatusArtwork(
+        artID,
+        artwork?.status
+    );
+    const { artDeleting, artDelError, deleteArtworkHandler } = useDeleteArtwork();
     const { comments, createComment, deleteComment, updateComment, replyComment, refreshComments } = useArtworkComments(
         artID,
         userID
     );
 
+    console.log('status', statusArtwork);
+
     useEffect(() => {
         // Kiểm tra khi artwork đã được tải xong
         if (artwork) {
             // Nếu status = 0, điều hướng tới trang 404
-            if (artwork.status === 0) {
+            if (artwork.status === 0 && userID !== artwork?.user?.userID) {
                 navigate('/', { replace: true });
             }
         }
@@ -113,6 +123,30 @@ function DetailArtwork() {
         }
     };
 
+    const handleArtworkClick = () => {
+        setHandleArtwork((prevState) => !prevState);
+    };
+
+    const handleDelArtworkClick = () => {
+        setDelArtworkDetail((prevState) => !prevState);
+    };
+
+    const handleDelete = () => {
+        deleteArtworkHandler(contentID);
+    };
+
+    const handleCloseModal = () => {
+        setActiveDelCmt(null);
+        setActiveCmtOption(null);
+        setActiveRepCmt(null);
+        setDelArtworkDetail(null);
+    };
+
+    const toggleStatus = () => {
+        const newStatus = statusArtwork === 0 ? 1 : 0;
+        changeStatus(newStatus);
+    };
+
     const renderComments = (comments, depth = 0) => {
         return (
             comments &&
@@ -130,12 +164,6 @@ function DetailArtwork() {
                         inputRef.current.focus();
                     }
                     setActiveRepCmt(commentID === activeRepCmt ? null : cmt.commentID);
-                };
-
-                const handleCloseModal = () => {
-                    setActiveDelCmt(null);
-                    setActiveCmtOption(null);
-                    setActiveRepCmt(null);
                 };
 
                 const handleEditComment = (commentID, currentContent) => {
@@ -178,14 +206,26 @@ function DetailArtwork() {
                                 active: activeDelCmt === cmt.commentID
                             })}
                         >
-                            <p className={cx('confirm-text')}>Are you sure you want to delete this comment?</p>
-                            <div className={cx('confirm-del')}>
-                                <button className={cx('yes-btn')} onClick={() => deleteComment(cmt.commentID)}>
-                                    <span>Yes</span>
-                                </button>
-                                <button className={cx('no-btn')} onClick={handleCloseModal}>
-                                    <span>No</span>
-                                </button>
+                            <div className={cx('frame-modal')}>
+                                <div className={cx('frame-tag-modal')}>
+                                    <div className={cx('tag-confirm-modal')}></div>
+                                </div>
+                                <div className={cx('confirm-modal')}>
+                                    <p className={cx('confirm-user')}>
+                                        Hey, <span>{cmt.fullName}</span>
+                                    </p>
+                                    <p className={cx('confirm-text')}>
+                                        🚫 Are you sure you want to delete this comment? 🚫
+                                    </p>
+                                    <div className={cx('confirm-del')}>
+                                        <button className={cx('yes-btn')} onClick={() => deleteComment(cmt.commentID)}>
+                                            <span>Yes</span>
+                                        </button>
+                                        <button className={cx('no-btn')} onClick={handleCloseModal}>
+                                            <span>No</span>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div className={cx('list-comment')}>
@@ -393,8 +433,64 @@ function DetailArtwork() {
                             <div className={cx('fullscreen')} onClick={enterFullscreen}>
                                 <MdFullscreen />
                             </div>
-                            <div className={cx('other')}>
-                                <BsThreeDotsVertical />
+                            {userID === artwork?.user?.userID ? (
+                                <div className={cx('other')} onClick={handleArtworkClick}>
+                                    <BsThreeDotsVertical />
+                                </div>
+                            ) : null}
+                        </div>
+                        <div
+                            className={cx('handle-threedot', {
+                                active: handleArtwork
+                            })}
+                        >
+                            <div className={cx('hidden')} onClick={toggleStatus} disabled={statusLoading}>
+                                {statusLoading ? (
+                                    'Updating'
+                                ) : statusArtwork === 0 ? (
+                                    <div className={cx('display-artwork')}>
+                                        <FaEye /> <p>Display</p>
+                                    </div>
+                                ) : (
+                                    <div className={cx('hidden-artwork')}>
+                                        <FaEyeSlash /> <p>Hidden</p>
+                                    </div>
+                                )}
+                            </div>
+                            <div className={cx('edit')}>
+                                <MdEdit />
+                                Edit
+                            </div>
+                            <div className={cx('delete')} onClick={handleDelArtworkClick}>
+                                <MdDelete />
+                                {artDeleting ? 'Deleting...' : 'Delete'}
+                            </div>
+                        </div>
+                    </div>
+                    <div
+                        className={cx('option-del', {
+                            active: delArtworkDetail
+                        })}
+                    >
+                        <div className={cx('frame-del-art')}>
+                            <div className={cx('del-tag')}>
+                                <div className={cx('tag-art')}></div>
+                            </div>
+                            <div className={cx('del-art')}>
+                                <p className={cx('confirm-user')}>
+                                    Hey, <span>{artwork?.user?.fullName}</span>
+                                </p>
+                                <p className={cx('confirm-text')}>
+                                    🚫 Are you sure you want to delete this artwork? 🚫
+                                </p>
+                                <div className={cx('confirm-del')}>
+                                    <button className={cx('yes-btn')} onClick={handleDelete} disabled={artDeleting}>
+                                        <span>{artDeleting ? 'Deleting' : 'Yes'}</span>
+                                    </button>
+                                    <button className={cx('no-btn')} onClick={handleCloseModal}>
+                                        <span>No</span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>

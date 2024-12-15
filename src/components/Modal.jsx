@@ -24,7 +24,7 @@ export const PositionModal = ({ className }) => {
 
     const handleAgree = () => {
         setShowModal(false);
-        navigate(`/profile/${user?.user?.username}`);
+        navigate(`/profile/update`);
     };
 
     const handleReject = () => {

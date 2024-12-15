@@ -145,11 +145,151 @@
     cursor: pointer;
 }
 
+.frame .detail-left .detail-favorite {
+    position: relative;
+
+    .option-del {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #00000080;
+        width: 100%;
+        height: 100%;
+        padding: 20px;
+        border-radius: 8px;
+        z-index: 1000;
+        display: none;
+
+        .frame-del-art {
+            position: relative;
+            width: 500px;
+            height: 320px;
+
+            .del-tag {
+                display: flex;
+                justify-content: flex-end;
+
+                .tag-art {
+                    width: 70%;
+                    height: 70px;
+                    border-top-left-radius: 30px;
+                    border-top-right-radius: 30px;
+                    background-color: var(--upper);
+                    box-shadow: 0 10px 0 var(--upper);
+                }
+            }
+
+            .del-art {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-direction: column;
+                width: 500px;
+                height: 250px;
+                border-top-left-radius: 30px;
+                border-bottom-right-radius: 30px;
+                border-bottom-left-radius: 30px;
+                background-color: var(--upper);
+
+                .confirm-user {
+                    font-size: 25px !important;
+                    font-weight: bolder;
+
+                    span {
+                        background: var(--gradiant-primary);
+                        background-clip: text;
+                        -webkit-background-clip: text;
+                        -webkit-text-fill-color: transparent;
+                    }
+                }
+
+                .confirm-text {
+                    padding-left: 0 !important;
+                    margin: 20px 0;
+                    font-size: 16px;
+                    font-weight: bold;
+                }
+
+                .confirm-del {
+                    margin-top: 15px;
+                    padding: 0 50px;
+                    display: flex;
+                    justify-content: space-between;
+                }
+
+                .confirm-del .yes-btn,
+                .confirm-del .no-btn {
+                    width: 100px;
+                    height: 50px;
+                    border: none;
+                    border-radius: 5px;
+                    cursor: pointer;
+                    margin: 0 20px;
+                }
+
+                .confirm-del .yes-btn span,
+                .confirm-del .no-btn span {
+                    font-size: 20px;
+                    font-weight: bold;
+                    color: var(--surface);
+                }
+
+                .confirm-del .yes-btn {
+                    background: var(--gradiant-primary);
+                }
+
+                .confirm-del .no-btn {
+                    background: transparent;
+                    border: 2px solid var(--secondary);
+                }
+            }
+        }
+
+        .frame-del-art::before {
+            position: absolute;
+            background-color: transparent;
+            top: 0;
+            left: 0;
+            width: 30%;
+            height: 70px;
+            content: '';
+            border-bottom-right-radius: 30px;
+            box-shadow: 30px 30px 0 var(--upper);
+        }
+
+        .frame-del-art::after {
+            position: absolute;
+            background: var(--gradiant-primary);
+            top: 0;
+            left: 0;
+            width: calc(30% - 10px);
+            height: 60px;
+            content: '⚠️ Warning';
+            border-radius: 30px;
+            align-items: center;
+            align-content: center;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+        }
+    }
+
+    .option-del.active {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        flex-direction: column;
+    }
+}
+
 .frame .detail-left .detail-favorite .options {
     display: flex;
     align-content: center;
     align-items: center;
     justify-content: space-between;
+    position: relative;
 }
 .frame .detail-left .detail-favorite .options,
 .frame .detail-left .detail-desc .desc {
@@ -186,6 +326,50 @@
 .frame .detail-left .detail-favorite .option-1 .favorite:hover,
 .frame .detail-left .detail-favorite .option-1 .comment:hover {
     color: var(--secondary);
+}
+
+.frame .detail-left .detail-favorite .options .handle-threedot {
+    display: none;
+    right: 0;
+    top: 50px;
+    position: absolute;
+    width: 130px;
+    height: auto;
+    border-radius: 5px;
+    background-color: var(--upper);
+
+    .hidden,
+    .edit,
+    .delete {
+        width: 100%;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        font-size: 16px;
+        font-weight: bold;
+        padding: 0 20px;
+        gap: 10px;
+        cursor: pointer;
+    }
+
+    .hidden:hover,
+    .edit:hover,
+    .delete:hover {
+        border-radius: 5px;
+        background: var(--gradiant-primary);
+    }
+
+    .hidden {
+        .display-artwork,
+        .hidden-artwork {
+            display: flex;
+            gap: 10px;
+        }
+    }
+}
+
+.frame .detail-left .detail-favorite .options .handle-threedot.active {
+    display: block;
 }
 
 .frame .detail-left .detail-favorite .option-2 {
@@ -398,7 +582,7 @@
 
 .handle-comment .three-dot-option .edit-comment:hover,
 .handle-comment .three-dot-option .del-comment:hover {
-    background-color: var(--highlight);
+    background: var(--gradiant-primary);
     border-radius: 5px;
 }
 
@@ -414,24 +598,96 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: var(--upper);
-    width: 350px;
-    height: 150px;
+    background-color: #00000080;
+    width: 100%;
+    height: 100%;
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     z-index: 1000;
-    border: 1px solid var(--highlight);
-    text-align: center;
-    align-content: center;
+
+    .frame-modal {
+        position: relative;
+        width: 500px;
+        height: 320px;
+
+        .frame-tag-modal {
+            display: flex;
+            justify-content: flex-end;
+
+            .tag-confirm-modal {
+                width: 70%;
+                height: 70px;
+                border-top-left-radius: 30px;
+                border-top-right-radius: 30px;
+                background-color: var(--upper);
+                box-shadow: 0 10px 0 var(--upper);
+            }
+        }
+        .confirm-modal {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            width: 500px;
+            height: 250px;
+            border-top-left-radius: 30px;
+            border-bottom-right-radius: 30px;
+            border-bottom-left-radius: 30px;
+            background-color: var(--upper);
+        }
+    }
+
+    .frame-modal::before {
+        position: absolute;
+        background-color: transparent;
+        top: 0;
+        left: 0;
+        width: 30%;
+        height: 70px;
+        content: '';
+        border-bottom-right-radius: 30px;
+        box-shadow: 30px 30px 0 var(--upper);
+    }
+
+    .frame-modal::after {
+        position: absolute;
+        background: var(--gradiant-primary);
+        top: 0;
+        left: 0;
+        width: calc(30% - 10px);
+        height: 60px;
+        content: '⚠️ Warning';
+        border-radius: 30px;
+        align-items: center;
+        align-content: center;
+        font-size: 16px;
+        font-weight: bold;
+    }
 }
 
 .handle-comment .del-modal.active {
-    display: block;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    flex-direction: column;
+}
+
+.handle-comment .del-modal .confirm-user {
+    font-size: 25px !important;
+    font-weight: bolder;
+
+    span {
+        background: var(--gradiant-primary);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
 }
 
 .handle-comment .del-modal .confirm-text {
     padding-left: 0 !important;
+    margin: 20px 0;
 }
 
 .handle-comment .del-modal .confirm-del {
@@ -448,6 +704,7 @@
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    margin: 0 20px;
 }
 
 .handle-comment .del-modal .confirm-del .yes-btn span,
@@ -458,11 +715,12 @@
 }
 
 .handle-comment .del-modal .confirm-del .yes-btn {
-    background-color: rgb(6, 153, 6);
+    background: var(--gradiant-primary);
 }
 
 .handle-comment .del-modal .confirm-del .no-btn {
-    background-color: red;
+    background: transparent;
+    border: 2px solid var(--secondary);
 }
 
 .handle-comment .frame-comment {
@@ -808,6 +1066,43 @@
                     }
                 }
 
+                .form-tag {
+                    height: auto;
+                    max-height: 150px;
+                    overflow: hidden;
+                    box-sizing: border-box;
+                    margin-bottom: 20px;
+                    .form-tag-frame {
+                        flex: 1;
+                        height: auto;
+                        overflow-y: auto;
+                        box-sizing: border-box;
+                        .tag-item {
+                            position: relative;
+                            width: 100%;
+                            height: 50px;
+                            background-color: var(--upper);
+                        }
+                        .tag-item p {
+                            position: absolute;
+                            font-size: 16px;
+                            font-weight: 500;
+                            z-index: 10;
+                            top: 50%;
+                            left: 50%;
+                            transform: translate(-50%, -50%);
+                            text-align: center;
+                        }
+                    }
+
+                    .form-no-result {
+                        padding: 20px 10px !important;
+                        height: 150px;
+                        overflow: hidden;
+                        box-sizing: border-box;
+                    }
+                }
+
                 .handle-btn {
                     display: flex;
                     gap: 10px;
@@ -875,7 +1170,7 @@
         }
     }
 }
-
+// Error, Spinner
 .error {
     border: 1px solid var(--error) !important;
 }

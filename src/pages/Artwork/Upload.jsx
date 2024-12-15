@@ -2,17 +2,18 @@ import classNames from 'classnames/bind';
 import styles from '../../styles/pages/Artwork.module.scss';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { FaImages } from 'react-icons/fa';
 import { Navigation } from 'swiper/modules';
-import { useCreateArtwork } from '../../hooks/useArtwork';
+import { useCreateArtwork, useSubjectArtwork, useTagArtwork } from '../../hooks/useArtwork';
 import { MdDelete } from 'react-icons/md';
-import { subjectData } from '../../../data/data';
+// import { subjectData } from '../../../data/data';
 import { handleFullScreen } from '../../utils/fullscreen/fullscreen';
 import { MdFullscreen } from 'react-icons/md';
 import { ToastContainer, Slide } from 'react-toastify';
 import { PositionModal } from '../../components/Modal';
 import { Breadcrumb } from '../../components';
+import { ImSpinner10 } from 'react-icons/im';
 
 const cx = classNames.bind(styles);
 const breadcrumbItems = [
@@ -25,7 +26,9 @@ function ArtworkUpload() {
     const [tagInput, setTagInput] = useState('');
     const [subjectInput, setSubjectInput] = useState('');
     const [isFormSubjectVisible, setFormSubjectVisible] = useState(false);
-    const { enterFullscreen, exitFullscreen, elementRef } = handleFullScreen();
+    const [isFormTagVisible, setFormTagVisible] = useState(false);
+    const { subject, subjectLoading, subjectError } = useSubjectArtwork();
+    const { tag, tagLoading, tagError } = useTagArtwork();
 
     const {
         creArtworkValue,
@@ -38,6 +41,7 @@ function ArtworkUpload() {
         selectedImage,
         selectedIndex,
         totalImages,
+        isSubmitting,
         handleRemoveImage,
         handleImageChange,
         handleSelectImage,
@@ -60,7 +64,7 @@ function ArtworkUpload() {
             // Kiểm tra nếu type là 'subject', kiểm tra giá trị nhập vào với subjectData
             if (type === 'subject') {
                 // Tìm subjectData có tên khớp với giá trị nhập vào (không phân biệt hoa/thường)
-                const matchedSubject = subjectData.find(
+                const matchedSubject = subject.find(
                     (subject) => subject.subject.toLowerCase() === input.trim().toLowerCase() // So sánh không phân biệt hoa/thường
                 );
 
@@ -70,27 +74,60 @@ function ArtworkUpload() {
                     setInput(''); // Xóa input sau khi thêm
                 }
             } else {
-                // Với taglist, không cần kiểm tra subjectData, chỉ kiểm tra điều kiện khác
-                handleAddItem(type, input.trim());
-                setInput('');
+                const matchedTag = tag.find(
+                    (tag) => tag.toLowerCase() === input.trim().toLowerCase() // So sánh không phân biệt hoa/thường
+                );
+
+                if (matchedTag && !currentList.includes(matchedTag)) {
+                    // Nếu tìm thấy tag khớp, thêm vào danh sách
+                    handleAddItem(type, matchedTag);
+                    setInput('');
+                } else if (!matchedTag && input.trim() && !currentList.includes(input.trim())) {
+                    // Nếu không tìm thấy tag và input hợp lệ, thêm mới tag
+                    handleAddItem(type, input.trim());
+                    setInput('');
+                }
             }
         }
     };
 
-    // Hàm xử lý focus và blur
-    const handleFocus = () => {
-        // Chỉ hiển thị nếu chưa có đủ 3 subject
-        if (creArtworkValue.subject.length < 3) {
-            setFormSubjectVisible(true);
+    const handleFocus = (type) => {
+        if (type === 'subject') {
+            if (creArtworkValue.subject.length < 3) {
+                setFormSubjectVisible(true);
+                setFormTagVisible(false);
+            }
+        }
+
+        if (type === 'taglist') {
+            if (creArtworkValue.taglist) {
+                setFormTagVisible(true);
+                setFormSubjectVisible(false);
+            }
         }
     };
-    const handleBlur = () => {
-        // Chỉ ẩn form khi không có tương tác
-        setTimeout(() => setFormSubjectVisible(false), 200); // Đảm bảo người dùng vẫn có thể chọn
+    const handleBlur = (event) => {
+        // Kiểm tra nếu người dùng thực sự rời khỏi toàn bộ form
+        setTimeout(() => {
+            const activeElement = document.activeElement;
+
+            if (activeElement.name !== 'subject' && activeElement.name !== 'taglist') {
+                setFormSubjectVisible(false);
+                setFormTagVisible(false);
+            }
+        }, 200); // Thời gian để người dùng có thể tương tác
     };
 
     return (
         <form className={cx('frame', 'frame-update')} onSubmit={handleSubmit}>
+            {isSubmitting && (
+                <div className={cx('splash')}>
+                    <div className={cx('splash-content')}>
+                        <ImSpinner10 className={cx('spinner')} /> {/* Spinner cho loading */}
+                        <p>Creating artwork...</p>
+                    </div>
+                </div>
+            )}
             <Breadcrumb items={breadcrumbItems} />
             <div className={cx('title-display')}>
                 {!creArtworkValue.title ? <p>Untitled</p> : <p>{creArtworkValue.title}</p>}
@@ -160,7 +197,7 @@ function ArtworkUpload() {
                             </Swiper>
                         </div>
                     )}
-                    <div className={cx('form-field')} ref={elementRef}>
+                    <div className={cx('form-field')}>
                         <label>Artwork Description</label>
                         <textarea
                             className={cx('description', { error: creErrors })}
@@ -169,10 +206,6 @@ function ArtworkUpload() {
                             value={creArtworkValue.description || ''}
                             onChange={handleChange}
                         />
-                        {creErrors?.description && <span className="error">{creErrors.description}</span>}
-                        <div className={cx('fullscreen')} onClick={enterFullscreen}>
-                            <MdFullscreen />
-                        </div>
                     </div>
                 </div>
                 <div className={cx('detail-right', 'frame-right-upload')}>
@@ -217,7 +250,7 @@ function ArtworkUpload() {
                                     value={subjectInput || ''}
                                     onChange={(e) => setSubjectInput(e.target.value)}
                                     onKeyDown={(e) => handleInputKeyDown(e, subjectInput, setSubjectInput, 'subject')}
-                                    onFocus={handleFocus}
+                                    onFocus={() => handleFocus('subject')}
                                     onBlur={handleBlur}
                                     className={cx('subject-input')}
                                     disabled={creArtworkValue.subject.length >= 3}
@@ -232,29 +265,27 @@ function ArtworkUpload() {
                         {isFormSubjectVisible && (
                             <div className={cx('form-subject')}>
                                 <div className={cx('form-subject-frame')}>
-                                    {subjectData
-                                        .filter((subject) => {
-                                            if (subject && subject.subject) {
+                                    {subject
+                                        .filter((subj) => {
+                                            if (subj) {
                                                 // Kiểm tra dữ liệu subject
-                                                return subject.subject
-                                                    .toLowerCase()
-                                                    .includes(subjectInput.toLowerCase());
+                                                return subj.label.toLowerCase().includes(subjectInput.toLowerCase());
                                             }
                                             return false;
                                         })
-                                        .map((subject) => (
+                                        .map((subj) => (
                                             <div
-                                                key={subject.id}
+                                                key={subj.subjectID}
                                                 className={cx('form-subject-item')}
                                                 onMouseDown={() => {
-                                                    handleAddItem('subject', subject.subject);
+                                                    handleAddItem('subject', subj.label);
                                                     setSubjectInput(''); // Reset input sau khi chọn
                                                     setFormSubjectVisible(false); // Ẩn danh sách sau khi chọn
                                                 }}
                                             >
                                                 <div className={cx('subject-item')}>
-                                                    <img src={subject.subjectImg} alt={subject.subject} />
-                                                    <p>{subject.subject}</p>
+                                                    <img src={subj.thumbnail} alt={subj.label} />
+                                                    <p>{subj.label}</p>
                                                 </div>
                                             </div>
                                         ))}
@@ -280,12 +311,57 @@ function ArtworkUpload() {
                                     type="text"
                                     name="taglist"
                                     value={tagInput}
+                                    onFocus={() => handleFocus('taglist')}
+                                    onBlur={handleBlur}
                                     onChange={(e) => setTagInput(e.target.value)}
                                     onKeyDown={(e) => handleInputKeyDown(e, tagInput, setTagInput, 'taglist')}
                                     className={cx('tag-input')}
                                 />
                             </div>
                         </div>
+                        {isFormTagVisible && tagInput && (
+                            <div className={cx('form-tag')}>
+                                <div className={cx('form-tag-frame')}>
+                                    {tag.filter((tag) => {
+                                        if (tag) {
+                                            // Kiểm tra dữ liệu tag
+                                            return tag.toLowerCase().includes(tagInput.toLowerCase());
+                                        }
+                                        return false;
+                                    }).length > 0 ? (
+                                        tag
+                                            .filter((tag) => {
+                                                if (tag) {
+                                                    return tag.toLowerCase().includes(tagInput.toLowerCase());
+                                                }
+                                                return false;
+                                            })
+                                            .map((tag, index) => (
+                                                <div
+                                                    key={index}
+                                                    className={cx('form-tag-item')}
+                                                    onMouseDown={() => {
+                                                        handleAddItem('taglist', tag);
+                                                        setTagInput(''); // Reset input sau khi chọn
+                                                        setFormTagVisible(false); // Ẩn danh sách sau khi chọn
+                                                    }}
+                                                >
+                                                    <div className={cx('tag-item')}>
+                                                        <p>{tag}</p>
+                                                    </div>
+                                                </div>
+                                            ))
+                                    ) : (
+                                        <div className={cx('form-tag-item')}>
+                                            <div className={cx('tag-item')}>
+                                                <p>No Result</p>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+
                         <div className={cx('form-field')}>
                             <label>Artwork link</label>
                             <input

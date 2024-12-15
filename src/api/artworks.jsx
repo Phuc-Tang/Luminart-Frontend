@@ -42,7 +42,7 @@ export const updateArtwork = async (formData) => {
 
 export const deleteArtwork = async (artID) => {
     try {
-        const response = await api.patch(`/artwork/update-artwork`, {
+        const response = await api.delete(`/artwork/delete-artwork/${artID}`, {
             params: { artID }
         });
         return response.data;
@@ -139,4 +139,28 @@ export const isLikedArtwork = async (contentID) => {
     } catch (error) {
         return { error: error.response?.data || 'An error occurred while checking is like artwork.' };
     }
+};
+
+export const getSubjectArtwork = async () => {
+    try {
+        const response = await api.get(`/artwork/get-artwork-subject`);
+        return response.data;
+    } catch (error) {
+        if (error) {
+            return { error: error.response.data };
+        }
+    }
+    return { error: 'An error occurred while render subjects artwork.' };
+};
+
+export const getTagArtwork = async () => {
+    try {
+        const response = await api.get(`/artwork/get-tag-list`);
+        return response.data;
+    } catch (error) {
+        if (error) {
+            return { error: error.response.data };
+        }
+    }
+    return { error: 'An error occurred while render tags artwork.' };
 };

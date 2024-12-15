@@ -5,10 +5,14 @@ import {
     getPaginationArtwork,
     likeArtwork,
     unlikeArtwork,
-    isLikedArtwork
+    isLikedArtwork,
+    deleteArtwork,
+    changeStatusArtwork,
+    getSubjectArtwork,
+    getTagArtwork
 } from '../api/artworks';
 import { useUser } from './useUserInfo';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { validateArtwork } from '../utils/validators/artworkValidation';
@@ -17,6 +21,7 @@ export const useCreateArtwork = () => {
     const { user } = useUser();
     const navigate = useNavigate();
     const [images, setImages] = useState([]);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [selectedImage, setSelectedImage] = useState(null);
     const [selectedIndex, setSelectedIndex] = useState(0);
     const [creErrors, setCreErrors] = useState(null);
@@ -166,6 +171,7 @@ export const useCreateArtwork = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setIsSubmitting(true);
         const validationErrors = validateArtwork(
             creArtworkValue.title,
             creArtworkValue.files,
@@ -188,11 +194,15 @@ export const useCreateArtwork = () => {
 
         try {
             const formData = new FormData();
+            const combinedTags = [...creArtworkValue.taglist, ...creArtworkValue.subject];
+            console.log(combinedTags);
+            console.log(creArtworkValue.taglist);
+
             formData.append('userID', creArtworkValue.userID);
             formData.append('title', creArtworkValue.title);
             formData.append('description', creArtworkValue.description);
             formData.append('link', creArtworkValue.link);
-            formData.append('taglist', JSON.stringify(creArtworkValue.taglist)); // Chuyển thành chuỗi nếu là mảng
+            formData.append('taglist', JSON.stringify(combinedTags)); // Chuyển thành chuỗi nếu là mảng
             formData.append('subject', JSON.stringify(creArtworkValue.subject)); // Chuyển thành chuỗi nếu là mảng
             formData.append('status', creArtworkValue.status);
 
@@ -235,6 +245,8 @@ export const useCreateArtwork = () => {
                 bodyClassName: 'custom-body-error',
                 progressClassName: 'custom-progress-error'
             });
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -249,10 +261,54 @@ export const useCreateArtwork = () => {
         selectedImage,
         selectedIndex,
         totalImages,
+        isSubmitting,
         handleRemoveImage,
         handleImageChange,
         handleSelectImage,
         handleStatusChange
+    };
+};
+
+export const useChangeStatusArtwork = (artID, initialStatus) => {
+    const [statusLoading, setStatusLoading] = useState(false);
+    const [statusError, setStatusError] = useState(null);
+    const [statusArtwork, setStatusArtwork] = useState(initialStatus);
+    const [data, setData] = useState(null);
+
+    useEffect(() => {
+        setStatusArtwork(initialStatus);
+    }, [initialStatus]);
+
+    const changeStatus = async (newStatus) => {
+        setStatusLoading(true);
+        setStatusError(null);
+        try {
+            const result = await changeStatusArtwork(artID, newStatus);
+            setStatusArtwork(newStatus);
+            setData(result);
+            toast.success(result.message, {
+                className: 'custom-toast-success',
+                bodyClassName: 'custom-body-success',
+                progressClassName: 'custom-progress-success'
+            });
+        } catch (err) {
+            setStatusError(err.error || 'An error occurred while changing artwork status.');
+            toast.error(err.message, {
+                className: 'custom-toast-error',
+                bodyClassName: 'custom-body-error',
+                progressClassName: 'custom-progress-error'
+            });
+        } finally {
+            setStatusLoading(false);
+        }
+    };
+
+    return {
+        statusLoading,
+        statusError,
+        statusArtwork,
+        data,
+        changeStatus
     };
 };
 
@@ -341,6 +397,39 @@ export const usePaginatedArtwork = () => {
     };
 
     return { artworks, loading, errors, hasMore, loadMore };
+};
+
+export const useDeleteArtwork = () => {
+    const [artDeleting, setArtDeleting] = useState(false);
+    const [artDelError, setArtDelError] = useState(null);
+    const navigate = useNavigate();
+
+    const deleteArtworkHandler = useCallback(
+        async (artID) => {
+            setArtDeleting(true);
+            setArtDelError(null);
+            try {
+                const response = await deleteArtwork(artID);
+                if (response?.error) {
+                    setArtDelError(response.error);
+                } else {
+                    toast.success(response.message, {
+                        className: 'custom-toast-success',
+                        bodyClassName: 'custom-body-success',
+                        progressClassName: 'custom-progress-success'
+                    });
+                    setTimeout(() => navigate('/'), 3000);
+                }
+            } catch (error) {
+                setArtDelError(error?.response?.data || 'An unknown error occurred');
+            } finally {
+                setArtDeleting(false);
+            }
+        },
+        [navigate]
+    );
+
+    return { artDeleting, artDelError, deleteArtworkHandler };
 };
 
 export const useDetailArtwork = (artID) => {
@@ -451,4 +540,74 @@ export const useLikeArtwork = (contentID) => {
     };
 
     return { likeClick, toggleLike, likeError, loading };
+};
+
+export const useSubjectArtwork = () => {
+    const [subject, setSubject] = useState([]); // Danh sách artworks
+    const [subjectLoading, setSubjectLoading] = useState(false); // Trạng thái tải
+    const [subjectError, setSubjectError] = useState(null); // Trạng thái lỗi
+
+    // Hàm fetch data từ API
+    const fetchSubjectArtwork = async () => {
+        setSubjectLoading(true);
+        setSubjectError(null);
+
+        try {
+            const response = await getSubjectArtwork();
+
+            if (response.subjects && response.subjects.length > 0) {
+                setSubject(response.subjects);
+            } else {
+                setSubjectLoading(false);
+                setSubjectError(response.message);
+            }
+        } catch (error) {
+            console.error('Error fetching paginated artworks:', error);
+            setSubjectError(error.message || 'An error occurred while fetching artworks.');
+        } finally {
+            setSubjectLoading(false);
+        }
+    };
+
+    // Tăng số trang và gọi API khi trang thay đổi
+    useEffect(() => {
+        fetchSubjectArtwork();
+    }, []);
+
+    return { subject, subjectLoading, subjectError };
+};
+
+export const useTagArtwork = () => {
+    const [tag, setTag] = useState([]); // Danh sách artworks
+    const [tagLoading, setTagLoading] = useState(false); // Trạng thái tải
+    const [tagError, setTagError] = useState(null); // Trạng thái lỗi
+
+    // Hàm fetch data từ API
+    const fetchTagArtwork = async () => {
+        setTagLoading(true);
+        setTagError(null);
+
+        try {
+            const response = await getTagArtwork();
+
+            if (response.tags && response.tags.length > 0) {
+                setTag(response.tags);
+            } else {
+                setTagLoading(false);
+                setTagError(response.message);
+            }
+        } catch (error) {
+            console.error('Error fetching paginated artworks:', error);
+            setTagError(error.message || 'An error occurred while fetching artworks.');
+        } finally {
+            setTagLoading(false);
+        }
+    };
+
+    // Tăng số trang và gọi API khi trang thay đổi
+    useEffect(() => {
+        fetchTagArtwork();
+    }, []);
+
+    return { tag, tagLoading, tagError };
 };
