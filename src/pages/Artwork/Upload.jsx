@@ -48,6 +48,8 @@ function ArtworkUpload() {
         handleStatusChange
     } = useCreateArtwork();
 
+    console.log(creErrors);
+
     const handleInputKeyDown = (e, input, setInput, type) => {
         const forbiddenChars = /[^a-zA-Z0-9\s]/;
         if (e.key === 'Enter' && input.trim()) {
@@ -120,7 +122,7 @@ function ArtworkUpload() {
 
     return (
         <form className={cx('frame', 'frame-update')} onSubmit={handleSubmit}>
-            {isSubmitting && (
+            {isSubmitting && !creErrors && (
                 <div className={cx('splash')}>
                     <div className={cx('splash-content')}>
                         <ImSpinner10 className={cx('spinner')} /> {/* Spinner cho loading */}

@@ -6,10 +6,10 @@ import { useUser } from '../../hooks/useUserInfo';
 
 const cx = classNames.bind(styles);
 
-function Gallery() {
+function Gallery({ userID }) {
     const { user } = useUser();
-    const { artworks, loading, errors, hasMore, loadMore } = usePaginatedArtwork();
-    console.log(user?.user?.userID);
+    const { artworks, artLoading, errors, hasMore, loadMore } = usePaginatedArtwork();
+    console.log('id', userID);
 
     return (
         <div className={cx('frame')}>
@@ -18,7 +18,7 @@ function Gallery() {
                 dataLength={artworks.length} // Số lượng artworks hiện tại
                 next={loadMore} // Hàm tải thêm
                 hasMore={hasMore} // Xác định còn dữ liệu hay không
-                loader={loading} // Hiển thị khi đang tải
+                loader={artLoading} // Hiển thị khi đang tải
                 endMessage={<p></p>} // Hiển thị khi hết dữ liệu
             >
                 <div className={cx('grid-artwork')}>
@@ -28,7 +28,7 @@ function Gallery() {
                         <div>No artworks found</div> // Hiển thị khi không có artwork
                     ) : (
                         artworks.map((art) => {
-                            return user?.user?.userID === art?.user?.userID ? (
+                            return userID === art?.user?.userID ? (
                                 <a href={`/artwork/${art.artID}`} key={art.artID}>
                                     <div className={cx('frame-artwork')}>
                                         <div className={cx('background')}>

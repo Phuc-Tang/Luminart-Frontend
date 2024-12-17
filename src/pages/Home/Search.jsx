@@ -5,11 +5,18 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import { motion } from 'framer-motion';
 import { ImSpinner10 } from 'react-icons/im';
+import { useLocation } from 'react-router-dom';
 
 const cx = classNames.bind(styles);
 
-function Home({}) {
+function Search() {
     const { artworks, artLoading, errors, hasMore, loadMore } = usePaginatedArtwork();
+    const location = useLocation();
+    const { searchResult } = location.state || {};
+    const queryParams = new URLSearchParams(location.search);
+    const keyword = queryParams.get('keyword');
+
+    console.log('Search for:', searchResult);
 
     return (
         <div className={cx('frame')}>
@@ -38,7 +45,7 @@ function Home({}) {
                         ) : artworks.length === 0 ? (
                             <div>No artworks found</div> // Hiển thị khi không có artwork
                         ) : (
-                            artworks.map((art, index) => {
+                            searchResult.map((art, index) => {
                                 return art?.status === 1 ? (
                                     <a href={`/artwork/${art.artID}`} key={art.artID}>
                                         <motion.div
@@ -84,4 +91,4 @@ function Home({}) {
     );
 }
 
-export default Home;
+export default Search;

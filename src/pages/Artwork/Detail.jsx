@@ -1,9 +1,14 @@
 import classNames from 'classnames/bind';
 import { useState, useRef, useEffect } from 'react';
 import { Slide, ToastContainer } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import styles from '../../styles/pages/Artwork.module.scss';
-import { useChangeStatusArtwork, useDeleteArtwork, useDetailArtwork } from '../../hooks/useArtwork';
+import {
+    useChangeStatusArtwork,
+    useDeleteArtwork,
+    useDetailArtwork,
+    usePaginatedArtwork
+} from '../../hooks/useArtwork';
 import { useParams } from 'react-router-dom';
 import { formatDate } from '../../utils/string/stringUtils';
 import { MdFavoriteBorder, MdFavorite, MdFullscreen, MdDelete, MdEdit, MdCancel } from 'react-icons/md';
@@ -26,6 +31,7 @@ const HOSTING_URL = import.meta.env.VITE_HOSTING_URL;
 
 function DetailArtwork() {
     const { enterFullscreen, exitFullscreen, elementRef } = handleFullScreen();
+    const { artworks, artLoading, hasMore, loadMore } = usePaginatedArtwork();
     const inputRef = useRef(null);
     const navigate = useNavigate();
     const [activeCmtOption, setActiveCmtOption] = useState(null);
@@ -52,8 +58,6 @@ function DetailArtwork() {
         artID,
         userID
     );
-
-    console.log('status', statusArtwork);
 
     useEffect(() => {
         // Kiểm tra khi artwork đã được tải xong
@@ -621,7 +625,115 @@ function DetailArtwork() {
                     </div>
                 </div>
             </div>
-            <div className={cx('detail-right')}></div>
+            <div className={cx('detail-right')}>
+                <div className={cx('tag-table')}>
+                    <div className={cx('tab')}>
+                        <p className={cx('tag-title')}>Tags</p>
+                        <div className={cx('tag-frame', 'tag-frame-1')}>
+                            {artwork?.taglist.map((tag, index) => {
+                                return (
+                                    <div className={cx('tag')} key={index}>
+                                        {tag}
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                    {!artwork?.link ? null : (
+                        <div className={cx('tab')}>
+                            <p className={cx('tag-title')}>Link</p>
+                            <Link to={`/${artwork?.link}`} className={cx('link')}>
+                                {artwork?.link}
+                            </Link>
+                        </div>
+                    )}
+                    <div className={cx('tab')}>
+                        <p className={cx('tag-title')}>
+                            By <span>{artwork?.user?.fullName}</span>
+                        </p>
+                        <div className={cx('tag-frame', 'grid-artwork')}>
+                            {(() => {
+                                // Lọc danh sách artwork thỏa mãn
+                                const filteredArtworks = artworks
+                                    .filter((art) => {
+                                        return (
+                                            artwork?.user?.userID === art?.user?.userID &&
+                                            contentID !== art?.artID &&
+                                            art?.status === 1
+                                        );
+                                    })
+                                    .slice(0, 6);
+
+                                // Kiểm tra có kết quả không
+                                if (filteredArtworks.length === 0) {
+                                    return (
+                                        <div className={cx('frame-artwork')}>
+                                            <div className={cx('background')}>
+                                                <p>No Result</p>
+                                            </div>
+                                        </div>
+                                    );
+                                }
+
+                                // Render danh sách artwork
+                                return filteredArtworks.map((art) => (
+                                    <a href={`/artwork/${art.artID}`} key={art.artID}>
+                                        <div className={cx('frame-artwork')}>
+                                            <div className={cx('background')}>
+                                                <img loading="lazy" src={`${art.art[0]}`} alt={art.title} />
+                                            </div>
+                                        </div>
+                                    </a>
+                                ));
+                            })()}
+                        </div>
+                    </div>
+                    <div className={cx('tab')}>
+                        <p className={cx('tag-title')}>By Other</p>
+                        <div className={cx('tag-frame', 'grid-artwork')}>
+                            {(() => {
+                                // Lọc danh sách artwork thỏa mãn
+                                const filteredArtworks = artworks
+                                    .filter((art) => {
+                                        return (
+                                            art.taglist?.some((tag) =>
+                                                artwork?.taglist?.some(
+                                                    (currentTag) => tag.toLowerCase() === currentTag.toLowerCase()
+                                                )
+                                            ) &&
+                                            artwork?.user?.userID !== art?.user?.userID &&
+                                            contentID !== art?.artID &&
+                                            art?.status === 1
+                                        );
+                                    })
+                                    .slice(0, 6);
+
+                                // Kiểm tra có kết quả không
+                                if (filteredArtworks.length === 0) {
+                                    return (
+                                        <div className={cx('frame-artwork')}>
+                                            <div className={cx('background')}>
+                                                <p>No Result</p>
+                                            </div>
+                                        </div>
+                                    );
+                                }
+
+                                // Render danh sách artwork
+                                return filteredArtworks.map((art) => (
+                                    <a href={`/artwork/${art.artID}`} key={art.artID}>
+                                        <div className={cx('frame-artwork')}>
+                                            <div className={cx('background')}>
+                                                <img loading="lazy" src={`${art.art[0]}`} alt={art.title} />
+                                            </div>
+                                        </div>
+                                    </a>
+                                ));
+                            })()}
+                        </div>
+                    </div>
+                </div>
+            </div>
             <ToastContainer
                 toastClassName={cx('custom-toast')}
                 bodyClassName={cx('custom-body')}

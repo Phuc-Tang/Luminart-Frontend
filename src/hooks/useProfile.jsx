@@ -50,6 +50,7 @@ export const useUpdateProfile = () => {
     const navigate = useNavigate();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [updateError, setUpdateError] = useState(null);
+    const [avatarPreview, setAvatarPreview] = useState(null);
     const [updateValue, setupdateValue] = useState({
         userID: user?.user?.userID || '',
         position: user?.user?.profile?.position || '',
@@ -73,10 +74,33 @@ export const useUpdateProfile = () => {
     const handleChange = (e) => {
         const { name, value, files } = e.target;
 
+        if (files && files[0]) {
+            const file = files[0];
+            setupdateValue((prev) => ({
+                ...prev,
+                [name]: file
+            }));
+            handleAvatarPreview(file);
+        } else {
+            setupdateValue((prev) => ({
+                ...prev,
+                [name]: value
+            }));
+        }
+    };
+
+    const handleAvatarPreview = (file) => {
+        const previewUrl = URL.createObjectURL(file);
+        setAvatarPreview(previewUrl);
+    };
+
+    const handleCancelAvatar = () => {
         setupdateValue((prev) => ({
             ...prev,
-            [name]: files ? files[0] : value
+            avatar: user?.user?.profile?.avatar || null
         }));
+        setAvatarPreview(null); // Xóa URL preview
+        setUpdateError(null);
     };
 
     const handleSubmit = async (e) => {
@@ -98,7 +122,11 @@ export const useUpdateProfile = () => {
 
         if (Object.keys(validationErrors).length > 0) {
             setUpdateError(validationErrors);
-            toast.error(Object.values(validationErrors)[0]);
+            toast.error(Object.values(validationErrors)[0], {
+                className: 'custom-toast-error',
+                bodyClassName: 'custom-body-error',
+                progressClassName: 'custom-progress-error'
+            });
             setIsSubmitting(false);
             return;
         }
@@ -121,17 +149,29 @@ export const useUpdateProfile = () => {
             }
 
             const response = await updateProfile(formData);
-            if (!response.success) {
-                toast.error(response.message);
+            if (response.error) {
+                toast.error(response.error, {
+                    className: 'custom-toast-success',
+                    bodyClassName: 'custom-body-success',
+                    progressClassName: 'custom-progress-success'
+                });
                 setUpdateError(response.error);
                 return;
             }
 
-            toast.success(response.message);
+            toast.success(response.message, {
+                className: 'custom-toast-success',
+                bodyClassName: 'custom-body-success',
+                progressClassName: 'custom-progress-success'
+            });
             setTimeout(() => navigate(`/profile/${user?.user?.username}`), 3000);
         } catch (error) {
-            console.error('Error updating profile:', error);
-            toast.error('Something went wrong. Please try again later.');
+            console.log(error);
+            toast.error('Something went wrong. Please try again later.', {
+                className: 'custom-toast-error',
+                bodyClassName: 'custom-body-error',
+                progressClassName: 'custom-progress-error'
+            });
         } finally {
             setIsSubmitting(false);
         }
@@ -141,7 +181,10 @@ export const useUpdateProfile = () => {
         isSubmitting,
         updateError,
         updateValue,
+        avatarPreview,
         handleChange,
+        handleAvatarPreview,
+        handleCancelAvatar,
         handleSubmit
     };
 };

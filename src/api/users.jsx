@@ -105,7 +105,9 @@ export const updateProfile = async (formData) => {
                 'Content-Type': 'multipart/form-data' // Đặt header cho FormData
             }
         });
-        return response.data;
+        console.log(response);
+
+        return { message: 'Profile updated successfully!' };
     } catch (error) {
         if (error.response) {
             return { error: error.response.data };

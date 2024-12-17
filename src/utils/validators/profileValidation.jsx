@@ -18,11 +18,7 @@ export const usernameBlank = (username) => {
     return username && username.length > 0;
 };
 
-export const fullNameBlank = (fullName) => {
-    return fullName && fullName.length > 0;
-};
-
-export const validateProfile = (position, gender, birth, bio, username, fullName) => {
+export const validateProfile = (position, gender, birth, bio, username) => {
     const errors = {};
 
     if (!position || !positionBlank(position)) {
@@ -35,8 +31,6 @@ export const validateProfile = (position, gender, birth, bio, username, fullName
         errors.bio = 'Bio is required.';
     } else if (!username || !usernameBlank(username)) {
         errors.username = 'Username is required.';
-    } else if (!fullName || !fullNameBlank(fullName)) {
-        errors.fullName = 'Fullname is required.';
     }
 
     return errors;

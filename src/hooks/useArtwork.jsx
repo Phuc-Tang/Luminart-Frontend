@@ -173,12 +173,11 @@ export const useCreateArtwork = () => {
         e.preventDefault();
         setIsSubmitting(true);
         const validationErrors = validateArtwork(
-            creArtworkValue.title,
             creArtworkValue.files,
+            creArtworkValue.title,
             creArtworkValue.description,
             creArtworkValue.taglist,
-            creArtworkValue.subject,
-            creArtworkValue.status
+            creArtworkValue.subject
         );
         if (Object.keys(validationErrors).length > 0) {
             setCreErrors(validationErrors);
@@ -355,14 +354,14 @@ export const usePaginatedArtwork = () => {
     const [page, setPage] = useState(1); // Trang hiện tại
     const [limit] = useState(14); // Số lượng artworks mỗi lần gọi
     const [hasMore, setHasMore] = useState(true); // Kiểm tra nếu còn dữ liệu
-    const [loading, setLoading] = useState(false); // Trạng thái tải
+    const [artLoading, setArtLoading] = useState(false); // Trạng thái tải
     const [errors, setErrors] = useState(null); // Trạng thái lỗi
 
     // Hàm fetch data từ API
     const fetchPaginatedArtwork = async () => {
         if (!hasMore) return; // Dừng nếu không còn dữ liệu
 
-        setLoading(true);
+        setArtLoading(true);
         setErrors(null);
 
         try {
@@ -382,7 +381,7 @@ export const usePaginatedArtwork = () => {
             console.error('Error fetching paginated artworks:', error);
             setErrors(error.message || 'An error occurred while fetching artworks.');
         } finally {
-            setLoading(false);
+            setArtLoading(false);
         }
     };
 
@@ -396,7 +395,7 @@ export const usePaginatedArtwork = () => {
         if (hasMore) setPage((prevPage) => prevPage + 1);
     };
 
-    return { artworks, loading, errors, hasMore, loadMore };
+    return { artworks, artLoading, errors, hasMore, loadMore };
 };
 
 export const useDeleteArtwork = () => {

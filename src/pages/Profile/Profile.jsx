@@ -7,7 +7,7 @@ import { useParams } from 'react-router-dom';
 import { useStickyActive } from '../../hooks/useStickyActive';
 import { useProfileUser } from '../../hooks/useProfile';
 import { useUser } from '../../hooks/useUserInfo';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Overview, Gallery, Favorites, Posts, About } from './index';
 
 const cx = classNames.bind(styles);
@@ -26,24 +26,26 @@ function Profile() {
     const position = userInfo && userInfo.profile.position;
     const follower = userInfo && userInfo.profile.followers_count;
     const following = userInfo && userInfo.profile.following_count;
+    const userID = userInfo?.userID;
 
     const tabMenu = [
         { id: 1, tab: 'Overview', component: <Overview customSection={customSection} /> },
-        { id: 2, tab: 'Gallery', component: <Gallery /> },
+        { id: 2, tab: 'Gallery', component: <Gallery userID={userID} /> },
         { id: 3, tab: 'Favorites', component: <Favorites /> },
         { id: 4, tab: 'Posts', component: <Posts /> },
         { id: 5, tab: 'About', component: <About /> }
     ];
+
     return (
         <div className={cx('frame')}>
             <div className={cx('cover')}>
                 <div className={cx('infomation')}>
                     <div className={cx('avatar')}>
-                        <img src={`${avatar}`} alt="avatar" style={{ width: '200px', height: '200px' }} />
+                        <img src={`${avatar}`} alt="avatar" />
                     </div>
                     <div className={cx('info')}>
                         <div className={cx('user-follow')}>
-                            <p className={cx('username')}>{fullName === null ? username : fullName}</p>
+                            <p className={cx('username')}>{username === fullName ? username : fullName}</p>
                             {!user || !user.user ? null : profileUser &&
                               user?.user?.userID === profileUser?.user?.userID ? null : (
                                 <div className={cx('follow-btn')}>

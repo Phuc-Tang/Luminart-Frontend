@@ -2,6 +2,7 @@ import classNames from 'classnames/bind';
 import styles from '../styles/components/Overview.module.scss';
 import image from '../assets/images/banner/images.jsx';
 import svg from '../assets/svg/index.jsx';
+import { useUser } from '../hooks/useUserInfo.jsx';
 import { RevealDiscussion, RevealRank } from '../motion/Reveal.jsx';
 
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -29,6 +30,8 @@ const ranking = [
 ];
 
 function Overview() {
+    const { user } = useUser();
+
     return (
         <div className={cx('frame-overview')}>
             <div className={cx('frame-blog')}>
@@ -79,7 +82,7 @@ function Overview() {
                     ))}
                 </div>
                 <RevealDiscussion className={cx('reveal-text')}>
-                    <p className={cx('greet')}>Hey, Gwyn3vere.</p>
+                    <p className={cx('greet')}>Hey, {user?.user?.profile?.fullName}</p>
                 </RevealDiscussion>
                 <RevealDiscussion className={cx('reveal-text')}>
                     <p className={cx('discussion')}>

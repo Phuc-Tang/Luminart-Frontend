@@ -1,5 +1,5 @@
-export const imagesBlank = (images) => {
-    return images && images.length > 0;
+export const imagesBlank = (files) => {
+    return files && files.length > 0;
 };
 
 export const titleBlank = (title) => {
@@ -14,23 +14,23 @@ export const taglistBlank = (taglist) => {
     return taglist && taglist.length > 0;
 };
 
-export const descBlank = (desc) => {
-    return desc && desc.length > 0;
+export const descBlank = (description) => {
+    return description && description.length > 0;
 };
 
-export const validateArtwork = (images, title, subject, taglist, desc) => {
+export const validateArtwork = (files, title, subject, taglist, description) => {
     const errors = {};
 
-    if (!images || !imagesBlank(images)) {
-        errors.images = 'Images is required.';
+    if (!files || !imagesBlank(files)) {
+        errors.files = 'Images is required.';
     } else if (!title || !titleBlank(title)) {
         errors.title = 'Title is required.';
     } else if (!subject || !subjectBlank(subject)) {
         errors.subject = 'Subject is required.';
     } else if (!taglist || !taglistBlank(taglist)) {
         errors.taglist = 'Tags is required.';
-    } else if (!desc || !descBlank(desc)) {
-        errors.desc = 'Description is required.';
+    } else if (!description || !descBlank(description)) {
+        errors.description = 'Description is required.';
     }
 
     return errors; // Trả về object chứa lỗi
