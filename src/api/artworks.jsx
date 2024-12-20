@@ -7,37 +7,29 @@ export const api = axios.create({
     withCredentials: true
 });
 
-export const createArtwork = async (userID, title, file, description, link, taglist, subject) => {
+export const createArtwork = async (formData) => {
     try {
-        const response = await api.post(`/artwork/create-new-artwork`, {
-            userID,
-            title,
-            file,
-            description,
-            link,
-            taglist,
-            subject
+        const response = await api.post(`/artwork/create-new-artwork`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data' // Đặt header cho FormData
+            }
         });
+        console.log(response.data);
         return response.data;
     } catch (error) {
-        if (error) {
+        if (error.response) {
             return { error: error.response.data };
         }
+        return { error: 'An error occurred while creating artwork.' };
     }
-    return { error: 'An error occurred while create artwork.' };
 };
 
-export const updateArtwork = async (userID, artID, title, file, description, link, taglist, subject) => {
+export const updateArtwork = async (formData) => {
     try {
-        const response = await api.patch(`/artwork/update-artwork`, {
-            userID,
-            artID,
-            title,
-            file,
-            description,
-            link,
-            taglist,
-            subject
+        const response = await api.patch(`/artwork/update-artwork`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data' // Đặt header cho FormData
+            }
         });
         return response.data;
     } catch (error) {
@@ -50,7 +42,7 @@ export const updateArtwork = async (userID, artID, title, file, description, lin
 
 export const deleteArtwork = async (artID) => {
     try {
-        const response = await api.patch(`/artwork/update-artwork`, {
+        const response = await api.delete(`/artwork/delete-artwork/${artID}`, {
             params: { artID }
         });
         return response.data;
@@ -101,6 +93,20 @@ export const getDetailArtwork = async (artID) => {
     return { error: 'An error occurred while get artwork.' };
 };
 
+export const changeStatusArtwork = async (artID, status) => {
+    try {
+        const response = await api.patch(`/artwork/change-status-artwork/${artID}`, {
+            status
+        });
+        return response.data;
+    } catch (error) {
+        if (error) {
+            return { error: error.response.data };
+        }
+    }
+    return { error: 'An error occurred while update status artwork.' };
+};
+
 export const likeArtwork = async (contentID) => {
     try {
         const response = await api.post('/like/like-artwork', null, {
@@ -133,4 +139,28 @@ export const isLikedArtwork = async (contentID) => {
     } catch (error) {
         return { error: error.response?.data || 'An error occurred while checking is like artwork.' };
     }
+};
+
+export const getSubjectArtwork = async () => {
+    try {
+        const response = await api.get(`/artwork/get-artwork-subject`);
+        return response.data;
+    } catch (error) {
+        if (error) {
+            return { error: error.response.data };
+        }
+    }
+    return { error: 'An error occurred while render subjects artwork.' };
+};
+
+export const getTagArtwork = async () => {
+    try {
+        const response = await api.get(`/artwork/get-tag-list`);
+        return response.data;
+    } catch (error) {
+        if (error) {
+            return { error: error.response.data };
+        }
+    }
+    return { error: 'An error occurred while render tags artwork.' };
 };

@@ -37,6 +37,10 @@
     margin-left: 10px;
 }
 
+.search-frame {
+    position: relative;
+}
+
 .search-bar {
     width: 900px;
     height: 50px;
@@ -55,6 +59,15 @@
             rgba(28, 58, 148, 1) 100%
         )
         1;
+}
+
+.search-box {
+    position: absolute;
+    top: 60px;
+    width: 900px;
+    height: auto;
+    border-radius: 5px;
+    background: #1f1e1e;
 }
 
 .right {
@@ -79,6 +92,7 @@
     height: 50px;
     object-fit: cover;
     border-radius: 50%;
+    border: 2px solid var(--secondary);
     object-position: center;
 }
 
@@ -89,6 +103,7 @@
     height: auto;
     right: 0;
     border-radius: 5px;
+    z-index: 102 !important;
     background-color: #202020;
 }
 

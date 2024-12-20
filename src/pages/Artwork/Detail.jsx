@@ -1,28 +1,45 @@
 import classNames from 'classnames/bind';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Slide, ToastContainer } from 'react-toastify';
+import { Link, useNavigate } from 'react-router-dom';
 import styles from '../../styles/pages/Artwork.module.scss';
-import { useDetailArtwork } from '../../hooks/useArtwork';
+import {
+    useChangeStatusArtwork,
+    useDeleteArtwork,
+    useDetailArtwork,
+    usePaginatedArtwork
+} from '../../hooks/useArtwork';
 import { useParams } from 'react-router-dom';
 import { formatDate } from '../../utils/string/stringUtils';
 import { MdFavoriteBorder, MdFavorite, MdFullscreen, MdDelete, MdEdit, MdCancel } from 'react-icons/md';
 import { BiSolidComment, BiComment } from 'react-icons/bi';
 import { BsThreeDotsVertical, BsThreeDots } from 'react-icons/bs';
 import { IoMdDownload, IoMdSend } from 'react-icons/io';
+import { FaEyeSlash, FaEye } from 'react-icons/fa';
 import { useUser } from '../../hooks/useUserInfo';
 import { useLikeArtwork } from '../../hooks/useArtwork';
 import { useArtworkComments } from '../../hooks/useComment';
 import { handleFullScreen } from '../../utils/fullscreen/fullscreen';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation, Pagination } from 'swiper/modules';
+import 'swiper/scss';
+import 'swiper/scss/navigation';
+import 'swiper/scss/pagination';
 
 const cx = classNames.bind(styles);
 const HOSTING_URL = import.meta.env.VITE_HOSTING_URL;
 
 function DetailArtwork() {
     const { enterFullscreen, exitFullscreen, elementRef } = handleFullScreen();
+    const { artworks, artLoading, hasMore, loadMore } = usePaginatedArtwork();
+    const inputRef = useRef(null);
+    const navigate = useNavigate();
     const [activeCmtOption, setActiveCmtOption] = useState(null);
     const [activeDelCmt, setActiveDelCmt] = useState(null);
     const [activeRepCmt, setActiveRepCmt] = useState(null);
     const [editCmtOption, setEditCmtOption] = useState(null);
+    const [delArtworkDetail, setDelArtworkDetail] = useState(null);
+    const [handleArtwork, setHandleArtwork] = useState(false);
     const { artID } = useParams();
     const { user } = useUser();
     const { artwork, loading, errors } = useDetailArtwork(artID);
@@ -32,16 +49,37 @@ function DetailArtwork() {
     const [newComment, setNewComment] = useState('');
     const [editComment, setEditComment] = useState('');
     const [replyComments, setReplyComments] = useState('');
+    const { statusLoading, statusError, statusArtwork, data, changeStatus } = useChangeStatusArtwork(
+        artID,
+        artwork?.status
+    );
+    const { artDeleting, artDelError, deleteArtworkHandler } = useDeleteArtwork();
     const { comments, createComment, deleteComment, updateComment, replyComment, refreshComments } = useArtworkComments(
         artID,
         userID
     );
 
-    const inputRef = useRef(null);
+    useEffect(() => {
+        // Kiểm tra khi artwork đã được tải xong
+        if (artwork) {
+            // Nếu status = 0, điều hướng tới trang 404
+            if (artwork.status === 0 && userID !== artwork?.user?.userID) {
+                navigate('/', { replace: true });
+            }
+        }
+    }, [artwork, navigate]);
+
+    if (loading) {
+        return <div>Loading...</div>;
+    }
+
+    if (errors) {
+        return <div>Error loading artwork details</div>;
+    }
 
     const focusTextField = () => {
         if (inputRef.current) {
-            inputRef.current.focus(); // Đặt focus vào div nhập liệu
+            inputRef.current.focus();
         }
     };
 
@@ -89,6 +127,30 @@ function DetailArtwork() {
         }
     };
 
+    const handleArtworkClick = () => {
+        setHandleArtwork((prevState) => !prevState);
+    };
+
+    const handleDelArtworkClick = () => {
+        setDelArtworkDetail((prevState) => !prevState);
+    };
+
+    const handleDelete = () => {
+        deleteArtworkHandler(contentID);
+    };
+
+    const handleCloseModal = () => {
+        setActiveDelCmt(null);
+        setActiveCmtOption(null);
+        setActiveRepCmt(null);
+        setDelArtworkDetail(null);
+    };
+
+    const toggleStatus = () => {
+        const newStatus = statusArtwork === 0 ? 1 : 0;
+        changeStatus(newStatus);
+    };
+
     const renderComments = (comments, depth = 0) => {
         return (
             comments &&
@@ -106,12 +168,6 @@ function DetailArtwork() {
                         inputRef.current.focus();
                     }
                     setActiveRepCmt(commentID === activeRepCmt ? null : cmt.commentID);
-                };
-
-                const handleCloseModal = () => {
-                    setActiveDelCmt(null);
-                    setActiveCmtOption(null);
-                    setActiveRepCmt(null);
                 };
 
                 const handleEditComment = (commentID, currentContent) => {
@@ -154,14 +210,26 @@ function DetailArtwork() {
                                 active: activeDelCmt === cmt.commentID
                             })}
                         >
-                            <p className={cx('confirm-text')}>Are you sure you want to delete this comment?</p>
-                            <div className={cx('confirm-del')}>
-                                <button className={cx('yes-btn')} onClick={() => deleteComment(cmt.commentID)}>
-                                    <span>Yes</span>
-                                </button>
-                                <button className={cx('no-btn')} onClick={handleCloseModal}>
-                                    <span>No</span>
-                                </button>
+                            <div className={cx('frame-modal')}>
+                                <div className={cx('frame-tag-modal')}>
+                                    <div className={cx('tag-confirm-modal')}></div>
+                                </div>
+                                <div className={cx('confirm-modal')}>
+                                    <p className={cx('confirm-user')}>
+                                        Hey, <span>{cmt.fullName}</span>
+                                    </p>
+                                    <p className={cx('confirm-text')}>
+                                        🚫 Are you sure you want to delete this comment? 🚫
+                                    </p>
+                                    <div className={cx('confirm-del')}>
+                                        <button className={cx('yes-btn')} onClick={() => deleteComment(cmt.commentID)}>
+                                            <span>Yes</span>
+                                        </button>
+                                        <button className={cx('no-btn')} onClick={handleCloseModal}>
+                                            <span>No</span>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div className={cx('list-comment')}>
@@ -302,7 +370,21 @@ function DetailArtwork() {
             <div className={cx('detail-left')}>
                 <div className={cx('detail-artwork')} ref={elementRef}>
                     <div className={cx('artwork')}>
-                        {loading ? null : <img src={artwork && artwork.art} alt={artwork && artwork.title} />}
+                        <Swiper
+                            modules={[Navigation, Pagination]}
+                            navigation
+                            pagination={{ clickable: true }}
+                            slidesPerView={1}
+                            spaceBetween={10}
+                            className={cx('swiper-container')}
+                            style={{ width: '100%', height: '600px' }}
+                        >
+                            {artwork?.art.map((art, index) => (
+                                <SwiperSlide key={index}>
+                                    {loading ? null : <img src={art} alt={art?.title} />}
+                                </SwiperSlide>
+                            ))}
+                        </Swiper>
                     </div>
                 </div>
                 <div className={cx('detail-favorite')}>
@@ -355,8 +437,64 @@ function DetailArtwork() {
                             <div className={cx('fullscreen')} onClick={enterFullscreen}>
                                 <MdFullscreen />
                             </div>
-                            <div className={cx('other')}>
-                                <BsThreeDotsVertical />
+                            {userID === artwork?.user?.userID ? (
+                                <div className={cx('other')} onClick={handleArtworkClick}>
+                                    <BsThreeDotsVertical />
+                                </div>
+                            ) : null}
+                        </div>
+                        <div
+                            className={cx('handle-threedot', {
+                                active: handleArtwork
+                            })}
+                        >
+                            <div className={cx('hidden')} onClick={toggleStatus} disabled={statusLoading}>
+                                {statusLoading ? (
+                                    'Updating'
+                                ) : statusArtwork === 0 ? (
+                                    <div className={cx('display-artwork')}>
+                                        <FaEye /> <p>Display</p>
+                                    </div>
+                                ) : (
+                                    <div className={cx('hidden-artwork')}>
+                                        <FaEyeSlash /> <p>Hidden</p>
+                                    </div>
+                                )}
+                            </div>
+                            <div className={cx('edit')}>
+                                <MdEdit />
+                                Edit
+                            </div>
+                            <div className={cx('delete')} onClick={handleDelArtworkClick}>
+                                <MdDelete />
+                                {artDeleting ? 'Deleting...' : 'Delete'}
+                            </div>
+                        </div>
+                    </div>
+                    <div
+                        className={cx('option-del', {
+                            active: delArtworkDetail
+                        })}
+                    >
+                        <div className={cx('frame-del-art')}>
+                            <div className={cx('del-tag')}>
+                                <div className={cx('tag-art')}></div>
+                            </div>
+                            <div className={cx('del-art')}>
+                                <p className={cx('confirm-user')}>
+                                    Hey, <span>{artwork?.user?.fullName}</span>
+                                </p>
+                                <p className={cx('confirm-text')}>
+                                    🚫 Are you sure you want to delete this artwork? 🚫
+                                </p>
+                                <div className={cx('confirm-del')}>
+                                    <button className={cx('yes-btn')} onClick={handleDelete} disabled={artDeleting}>
+                                        <span>{artDeleting ? 'Deleting' : 'Yes'}</span>
+                                    </button>
+                                    <button className={cx('no-btn')} onClick={handleCloseModal}>
+                                        <span>No</span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -487,7 +625,115 @@ function DetailArtwork() {
                     </div>
                 </div>
             </div>
-            <div className={cx('detail-right')}></div>
+            <div className={cx('detail-right')}>
+                <div className={cx('tag-table')}>
+                    <div className={cx('tab')}>
+                        <p className={cx('tag-title')}>Tags</p>
+                        <div className={cx('tag-frame', 'tag-frame-1')}>
+                            {artwork?.taglist.map((tag, index) => {
+                                return (
+                                    <div className={cx('tag')} key={index}>
+                                        {tag}
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                    {!artwork?.link ? null : (
+                        <div className={cx('tab')}>
+                            <p className={cx('tag-title')}>Link</p>
+                            <Link to={`/${artwork?.link}`} className={cx('link')}>
+                                {artwork?.link}
+                            </Link>
+                        </div>
+                    )}
+                    <div className={cx('tab')}>
+                        <p className={cx('tag-title')}>
+                            By <span>{artwork?.user?.fullName}</span>
+                        </p>
+                        <div className={cx('tag-frame', 'grid-artwork')}>
+                            {(() => {
+                                // Lọc danh sách artwork thỏa mãn
+                                const filteredArtworks = artworks
+                                    .filter((art) => {
+                                        return (
+                                            artwork?.user?.userID === art?.user?.userID &&
+                                            contentID !== art?.artID &&
+                                            art?.status === 1
+                                        );
+                                    })
+                                    .slice(0, 6);
+
+                                // Kiểm tra có kết quả không
+                                if (filteredArtworks.length === 0) {
+                                    return (
+                                        <div className={cx('frame-artwork')}>
+                                            <div className={cx('background')}>
+                                                <p>No Result</p>
+                                            </div>
+                                        </div>
+                                    );
+                                }
+
+                                // Render danh sách artwork
+                                return filteredArtworks.map((art) => (
+                                    <a href={`/artwork/${art.artID}`} key={art.artID}>
+                                        <div className={cx('frame-artwork')}>
+                                            <div className={cx('background')}>
+                                                <img loading="lazy" src={`${art.art[0]}`} alt={art.title} />
+                                            </div>
+                                        </div>
+                                    </a>
+                                ));
+                            })()}
+                        </div>
+                    </div>
+                    <div className={cx('tab')}>
+                        <p className={cx('tag-title')}>By Other</p>
+                        <div className={cx('tag-frame', 'grid-artwork')}>
+                            {(() => {
+                                // Lọc danh sách artwork thỏa mãn
+                                const filteredArtworks = artworks
+                                    .filter((art) => {
+                                        return (
+                                            art.taglist?.some((tag) =>
+                                                artwork?.taglist?.some(
+                                                    (currentTag) => tag.toLowerCase() === currentTag.toLowerCase()
+                                                )
+                                            ) &&
+                                            artwork?.user?.userID !== art?.user?.userID &&
+                                            contentID !== art?.artID &&
+                                            art?.status === 1
+                                        );
+                                    })
+                                    .slice(0, 6);
+
+                                // Kiểm tra có kết quả không
+                                if (filteredArtworks.length === 0) {
+                                    return (
+                                        <div className={cx('frame-artwork')}>
+                                            <div className={cx('background')}>
+                                                <p>No Result</p>
+                                            </div>
+                                        </div>
+                                    );
+                                }
+
+                                // Render danh sách artwork
+                                return filteredArtworks.map((art) => (
+                                    <a href={`/artwork/${art.artID}`} key={art.artID}>
+                                        <div className={cx('frame-artwork')}>
+                                            <div className={cx('background')}>
+                                                <img loading="lazy" src={`${art.art[0]}`} alt={art.title} />
+                                            </div>
+                                        </div>
+                                    </a>
+                                ));
+                            })()}
+                        </div>
+                    </div>
+                </div>
+            </div>
             <ToastContainer
                 toastClassName={cx('custom-toast')}
                 bodyClassName={cx('custom-body')}

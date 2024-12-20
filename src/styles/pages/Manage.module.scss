@@ -1,0 +1,105 @@
+.frame-manage {
+    height: calc(100vh - 90px);
+    // overflow: hidden;
+}
+
+.frame-manage .frame-user {
+    margin: 10px 0;
+}
+
+.frame-manage .frame-user .header {
+    margin-bottom: 10px;
+    font-size: 25px;
+    font-weight: bolder;
+}
+
+.frame-manage .frame-user .table {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-collapse: collapse;
+}
+
+.frame-manage .frame-user .scroll {
+    overflow-y: auto;
+    height: 770px;
+    // max-height: 1080px;
+    // background: var(--gradiant-primary);
+}
+
+// thead
+.frame-manage .frame-user .table .columns {
+    width: 100%;
+    display: flex;
+    background: var(--gradiant-primary);
+}
+
+.frame-manage .frame-user .table .columns p {
+    font-size: 14px;
+    text-align: left;
+    padding: 5px;
+}
+
+// tbody
+.frame-manage .frame-user .table tbody {
+    overflow-y: auto !important;
+}
+
+.frame-manage .frame-user .table .content {
+    display: flex;
+    border-bottom: 1px solid var(--upper);
+    padding: 10px 5px;
+    align-items: center;
+    cursor: pointer;
+}
+
+.frame-manage .frame-user .table .content:hover {
+    background: var(--gradiant-primary);
+}
+
+//user
+.frame-manage .frame-user .table .content .user {
+    gap: 30px;
+    display: flex;
+    align-items: center;
+}
+
+.frame-manage .frame-user .table .content .user .avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+}
+
+.frame-manage .frame-user .table .content .user .avatar img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.frame-manage .frame-user .table .content .user .info {
+}
+
+.frame-manage .frame-user .table .content .user .info .fullname {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.frame-manage .frame-user .table .content .user .info .email {
+    font-size: 16px;
+    color: var(--hint);
+}
+
+.frame-manage .frame-user .table .content .index,
+.frame-manage .frame-user .table .content .position,
+.frame-manage .frame-user .table .content .joined,
+.frame-manage .frame-user .table .content .option {
+    font-size: 16px;
+    font-weight: 500;
+    padding: 5px;
+}
+
+//scroll
+.scroll::-webkit-scrollbar {
+    width: 0px;
+}

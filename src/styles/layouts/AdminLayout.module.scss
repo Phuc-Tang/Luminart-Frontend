@@ -1,0 +1,24 @@
+.frame {
+}
+
+.frame .frame-admin {
+    display: grid;
+    margin: 90px 20px 0;
+    height: calc(100vh - 90px);
+    gap: 20px;
+    overflow: hidden;
+    box-sizing: border-box;
+    grid-template-columns: 300px auto;
+}
+
+.frame .frame-admin .sidebar {
+    height: calc(100vh - 90px);
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+.frame .frame-admin .children {
+    height: calc(100vh - 90px);
+    overflow: hidden;
+    box-sizing: border-box;
+}

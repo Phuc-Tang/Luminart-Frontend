@@ -1,0 +1,41 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Rubik+Wet+Paint&display=swap');
+.splash {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+.splash-content {
+    display: flex;
+    align-items: center;
+    color: white;
+    font-size: 1.5rem;
+    flex-direction: column;
+    gap: 10px;
+
+    .luminart {
+        font-family: 'Rubik Wet Paint', system-ui;
+        font-size: 32px;
+    }
+}
+
+.spinner {
+    animation: spin 1s linear infinite;
+    margin-right: 10px;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
