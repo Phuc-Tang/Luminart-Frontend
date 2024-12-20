@@ -51,8 +51,18 @@ function App() {
                                 key={index}
                                 path={route.path}
                                 element={
-                                    route.protect && (!user || user.success === false) ? (
-                                        <Navigate to="/signin" replace />
+                                    route.protect ? (
+                                        !user ||
+                                        user.success === false ||
+                                        (route.role !== undefined &&
+                                            user?.user?.role !== route.role &&
+                                            user?.user?.role !== 0) ? (
+                                            <Navigate to="/" replace />
+                                        ) : (
+                                            <Layout>
+                                                <Page />
+                                            </Layout>
+                                        )
                                     ) : (
                                         <Layout>
                                             <Page />

@@ -7,7 +7,7 @@ import { GrUpgrade } from 'react-icons/gr';
 import { FaSignOutAlt, FaImages, FaUserCircle } from 'react-icons/fa';
 import { TbLogin2, TbLogin } from 'react-icons/tb';
 import { IoMdSettings } from 'react-icons/io';
-import { MdLanguage, MdEdit } from 'react-icons/md';
+import { MdLanguage, MdEdit, MdAdminPanelSettings } from 'react-icons/md';
 import { RiColorFilterFill } from 'react-icons/ri';
 import { useUser } from '../hooks/useUserInfo';
 import React, { useState, useEffect, useRef } from 'react';
@@ -142,6 +142,15 @@ function Header() {
                                         </p>
                                         <p>Upgrade</p>
                                     </div>
+                                    {user?.user?.role === 0 ? (
+                                        <a href={`${HOSTING_URL}/admin/dashboard`} className={cx('tab')}>
+                                            <p>
+                                                <MdAdminPanelSettings />
+                                            </p>
+                                            <p>Admin</p>
+                                        </a>
+                                    ) : null}
+                                    <hr />
                                     <a
                                         href={`${HOSTING_URL}/profile/${user && user.user.username}`}
                                         className={cx('tab')}
