@@ -64,6 +64,7 @@ export const useUpdateProfile = () => {
         username: user?.user?.username || '',
         fullName: user?.user?.profile?.fullName || ''
     });
+    console.log(updateValue);
 
     useEffect(() => {
         if (user?.user?.userID) {
@@ -111,13 +112,8 @@ export const useUpdateProfile = () => {
             updateValue.position,
             updateValue.gender,
             updateValue.birth,
-            updateValue.address,
-            updateValue.phone,
-            updateValue.link,
             updateValue.bio,
-            updateValue.avatar,
-            updateValue.username,
-            updateValue.fullName
+            updateValue.username
         );
 
         if (Object.keys(validationErrors).length > 0) {
