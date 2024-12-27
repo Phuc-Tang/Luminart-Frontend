@@ -110,3 +110,245 @@
     opacity: 1;
     transform: scale(1);
 }
+
+//Gallery
+.gallery-modal {
+    width: 90%;
+    height: 800px;
+    border-radius: 5px;
+    border: 5px outset transparent;
+    background: var(--gradiant-primary) border-box;
+
+    .gallery {
+        display: grid;
+        grid-template-columns: 500px auto;
+        width: 100%;
+        height: 100%;
+        border-radius: 5px;
+        background-color: var(--base);
+        overflow: hidden;
+        padding: 10px;
+
+        .gallery-left {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 100%;
+            height: 100%;
+            padding: 0 20px;
+            background-color: var(--upper);
+
+            .h2 {
+                height: 70px;
+                font-size: 40px;
+                font-weight: bolder;
+                align-content: center;
+            }
+
+            .fields {
+                width: 100%;
+
+                label {
+                    display: block;
+                    width: 100%;
+                    font-size: 16px;
+                    font-weight: bolder;
+                }
+
+                .art-info {
+                    height: 50px;
+                    margin: 5px 0;
+                    border: 2px outset transparent;
+                    background: var(--gradiant-primary) border-box;
+
+                    p {
+                        display: flex;
+                        align-items: center;
+                        width: 100%;
+                        height: 100%;
+                        padding: 0 10px;
+                        font-size: 20px;
+                        font-weight: 500;
+                        background-color: var(--base);
+                    }
+                }
+
+                .art-desc {
+                    height: 200px;
+
+                    div {
+                        width: 100%;
+                        height: 100%;
+                        padding: 10px;
+                        font-size: 16px;
+                        font-weight: 500;
+                        background-color: var(--base);
+                    }
+                }
+
+                .art-taglist {
+                    display: inline-block;
+                    width: auto;
+                    height: 30px;
+                    margin: 5px;
+                    border-radius: 2px;
+                    border: 1px solid var(--secondary);
+                    background-color: var(--base);
+
+                    .tag {
+                        height: 30px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        padding: 10px;
+                    }
+
+                    p {
+                        font-size: 14px;
+                        font-weight: bold;
+                    }
+                }
+            }
+
+            .buttons {
+                display: flex;
+                justify-content: flex-end;
+
+                .cancel,
+                .submit {
+                    width: 100px;
+                    height: 50px;
+                    margin-left: 10px;
+                    font-size: 18px;
+                    cursor: pointer;
+                    font-weight: bold;
+                    display: flex;
+                    border-radius: 5px;
+                    align-items: center;
+                    justify-content: center;
+                }
+
+                .cancel {
+                    border: 2px solid var(--surface);
+                }
+
+                .submit {
+                    background: var(--gradiant-primary);
+                }
+            }
+        }
+
+        .gallery-right {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            .gallery-bar {
+                display: flex;
+                height: 80px;
+                align-items: center;
+                justify-content: space-between;
+                background-color: var(--upper);
+
+                .gallery-close {
+                    width: 70px;
+                    height: 100%;
+                    display: flex;
+                    font-size: 30px;
+                    cursor: pointer;
+                    align-items: center;
+                    justify-content: center;
+                }
+            }
+
+            .grid-artwork {
+                width: 100%;
+                max-height: 90vh;
+                box-sizing: border-box;
+                overflow-y: auto !important;
+                transition: all 0.5s ease-in-out;
+
+                .grid {
+                    display: grid;
+                    grid-template-columns: repeat(6, 1fr);
+                    gap: 10px;
+                }
+            }
+
+            .frame-artwork {
+                position: relative;
+                height: 200px; /* Độ cao cố định */
+                border-radius: 5px;
+                overflow: hidden;
+                cursor: pointer;
+                align-items: flex-end;
+            }
+
+            .frame-artwork:hover {
+                border-radius: 5px;
+                border: 2px outset transparent;
+                background: var(--gradiant-primary) border-box;
+            }
+            .frame-artwork.select {
+                border-radius: 5px;
+                border: 2px outset transparent;
+                background: var(--gradiant-primary) border-box;
+            }
+
+            .frame-artwork .img {
+                width: 100%;
+                height: 200px;
+                object-fit: cover;
+                object-position: top;
+                display: block;
+                max-width: 100%;
+            }
+
+            .background {
+                position: relative;
+                width: 100%;
+                height: 100%;
+                overflow: hidden;
+            }
+
+            .splash {
+                width: 100%;
+                height: 100%;
+                // position: absolute;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                background: var(--base);
+                z-index: 1;
+            }
+
+            .splash-content {
+                display: flex;
+                align-items: center;
+                color: white;
+                font-size: 1.5rem;
+                flex-direction: column;
+                gap: 10px;
+
+                p {
+                    font-size: 20px;
+                    font-weight: bold;
+                }
+            }
+
+            .spinner {
+                animation: spin 1s linear infinite;
+                margin-right: 10px;
+            }
+
+            @keyframes spin {
+                0% {
+                    transform: rotate(0deg);
+                }
+                100% {
+                    transform: rotate(360deg);
+                }
+            }
+        }
+    }
+}

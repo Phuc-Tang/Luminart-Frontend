@@ -1,0 +1,50 @@
+.frame-left,
+.frame-right {
+    width: 100%;
+    height: auto;
+}
+
+.grid-section-left {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10;
+}
+
+.grid-section-right {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10;
+}
+
+.section {
+    width: 210px;
+    height: 150px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    border: 3px solid transparent;
+    background: var(--gradiant-primary) border-box;
+}
+
+.section .content {
+    gap: 10;
+    display: flex;
+    width: 100%;
+    height: 100%;
+    border-radius: 3px;
+    background: var(--gradiant-primary);
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 14px;
+    background-image: url('https://www.transparenttextures.com/patterns/diagmonds.png');
+
+    .icon {
+        font-size: 50px;
+    }
+
+    .name {
+        font-size: 14px;
+        font-weight: bold;
+    }
+}

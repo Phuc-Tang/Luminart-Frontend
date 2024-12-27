@@ -1,15 +1,18 @@
-import { AuthLayout, HomeLayout, VerifyLayout, AdminLayout } from '../layouts';
+import { AuthLayout, HomeLayout, VerifyLayout, AdminLayout, ProfileLayout } from '../layouts';
 
 import Home from '../pages/Home/Home';
 import Search from '../pages/Home/Search';
 import SignIn from '../pages/Auth/SignIn';
 import SignUp from '../pages/Auth/SignUp';
-import Profile from '../pages/Profile/Profile';
+import Profile from '../components/Profile';
 import Verify from '../pages/Auth/Verify';
 import { Update } from '../pages/Profile';
 
 // Artwork
 import { Detail, Upload } from '../pages/Artwork';
+
+// Profile
+import { Showcase, Gallery } from '../pages/Profile';
 
 // Admin
 import Dashboard from '../pages/Admin/Dashboard';
@@ -27,7 +30,8 @@ const publicRoutes = [
     { path: '/artwork/upload/', component: Upload, protect: true, role: 1 },
 
     //User routes
-    { path: '/profile/:username', component: Profile, protect: false, role: 1 },
+    { path: '/profile/:username', component: Showcase, layout: ProfileLayout, protect: false, role: 1 },
+    { path: '/profile/:username/gallery', component: Gallery, layout: ProfileLayout, protect: false, role: 1 },
     { path: '/profile/update/', component: Update, protect: true, role: 1 },
 
     //Admin routes

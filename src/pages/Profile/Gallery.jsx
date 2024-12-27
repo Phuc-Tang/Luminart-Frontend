@@ -3,13 +3,18 @@ import styles from '../../styles/pages/Gallery.module.scss';
 import { usePaginatedArtwork } from '../../hooks/useArtwork';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useUser } from '../../hooks/useUserInfo';
+import { useProfileUser } from '../../hooks/useProfile';
+import { useParams } from 'react-router-dom';
 
 const cx = classNames.bind(styles);
 
-function Gallery({ userID }) {
+function Gallery() {
     const { user } = useUser();
+    const { username } = useParams();
+    const { profileUser, loading, error } = useProfileUser(username);
     const { artworks, artLoading, errors, hasMore, loadMore } = usePaginatedArtwork();
-    console.log('id', userID);
+    console.log('id', artworks);
+    const userID = profileUser?.user?.userID;
 
     return (
         <div className={cx('frame')}>

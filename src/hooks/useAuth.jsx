@@ -140,13 +140,15 @@ export const useSignInForm = () => {
     };
 };
 
-export const useSignInGoogle = () => {
+export const useSignInGoogle = (location) => {
     const [loading, setLoading] = useState(false);
+    const [isSuccess, setSuccessfully] = useState(null);
     const [error, setError] = useState(null);
     const { login } = useUser(); // Dùng context để lưu trữ người dùng
 
     const handleGoogleLogin = async () => {
         setLoading(true);
+        setSuccessfully(null);
         setError(null);
 
         const result = await signInGoogle();
@@ -158,7 +160,8 @@ export const useSignInGoogle = () => {
             console.error('Google login failed:', result.error);
         } else {
             console.log('Google login successful:', result);
-            login(result.user); // Lưu thông tin người dùng vào context
+            login(result.user);
+            setSuccessfully(isSuccess);
         }
 
         setLoading(false);
@@ -199,5 +202,5 @@ export const verifyEmailForm = () => {
         }
     }, [navigate]);
 
-    return { isLoading, message, error };
+    return { isResult, isLoading, message, error };
 };

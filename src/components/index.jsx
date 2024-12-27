@@ -4,3 +4,5 @@ export { default as HorizontalMenu } from './HorizontalMenu';
 export { default as Overview } from './Overview';
 export { default as Breadcrumb } from './Breadcrumb';
 export { default as Sidebar } from './Sidebar';
+export { default as Profile } from './Profile';
+export { default as MenuProfile } from './MenuProfile';

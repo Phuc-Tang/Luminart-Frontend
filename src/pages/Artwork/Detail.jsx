@@ -253,7 +253,7 @@ function DetailArtwork() {
 
                                             <p className={cx('cmt-time')}>{cmt.created_time}</p>
                                         </div>
-                                        {user && cmt && user.user.userID !== cmt.userID ? null : (
+                                        {user && cmt && user?.user?.userID !== cmt?.userID ? null : (
                                             <div
                                                 className={cx('three-dot')}
                                                 onClick={() => handleThreeDotsClick(cmt.commentID)}
@@ -316,9 +316,9 @@ function DetailArtwork() {
                                         active: activeRepCmt === cmt.commentID
                                     })}
                                 >
-                                    <a href={`${HOSTING_URL}profile/${user && user.user.username}`}>
+                                    <a href={`${HOSTING_URL}profile/${user && user?.user?.username}`}>
                                         <div className={cx('user-avatar')}>
-                                            <img src={user && user.user.profile.avatar} alt="avatar" />
+                                            <img src={user && user?.user?.profile?.avatar} alt="avatar" />
                                         </div>
                                     </a>
                                     <form

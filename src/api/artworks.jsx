@@ -67,10 +67,10 @@ export const getAllArtwork = async () => {
     return { error: 'An error occurred while get all artwork.' };
 };
 
-export const getPaginationArtwork = async ({ page, limit }) => {
+export const getPaginationArtwork = async ({ page, limit, userID }) => {
     try {
         const response = await api.get('/artwork/paginate-artwork', {
-            params: { page, limit }
+            params: { page, limit, userID }
         });
 
         return response;
@@ -163,4 +163,18 @@ export const getTagArtwork = async () => {
         }
     }
     return { error: 'An error occurred while render tags artwork.' };
+};
+
+export const getArtworkById = async ({ page, limit, userID }) => {
+    try {
+        const response = await api.get(`/artwork/all-artwork-of-user/${userID}`, {
+            params: { page, limit, userID }
+        });
+
+        return response;
+    } catch (error) {
+        if (error) {
+            return { error: error.response.data };
+        }
+    }
 };
