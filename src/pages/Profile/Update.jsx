@@ -12,6 +12,7 @@ const cx = classNames.bind(styles);
 function Update() {
     const { isSubmitting, updateError, updateValue, avatarPreview, handleChange, handleSubmit, handleCancelAvatar } =
         useUpdateProfile();
+    console.log(updateValue.bio);
 
     return (
         <div className={cx('frame')}>
