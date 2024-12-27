@@ -9,13 +9,15 @@ import {
     deleteArtwork,
     changeStatusArtwork,
     getSubjectArtwork,
-    getTagArtwork
+    getTagArtwork,
+    getArtworkById
 } from '../api/artworks';
 import { useUser } from './useUserInfo';
 import { useState, useEffect, useCallback } from 'react';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { validateArtwork } from '../utils/validators/artworkValidation';
+import { useProfileUser } from '../hooks/useProfile';
 
 export const useCreateArtwork = () => {
     const { user } = useUser();
@@ -356,6 +358,8 @@ export const usePaginatedArtwork = () => {
     const [hasMore, setHasMore] = useState(true); // Kiểm tra nếu còn dữ liệu
     const [artLoading, setArtLoading] = useState(false); // Trạng thái tải
     const [errors, setErrors] = useState(null); // Trạng thái lỗi
+    const { user } = useUser();
+    const userID = user?.user?.userID;
 
     // Hàm fetch data từ API
     const fetchPaginatedArtwork = async () => {
@@ -365,7 +369,7 @@ export const usePaginatedArtwork = () => {
         setErrors(null);
 
         try {
-            const response = await getPaginationArtwork({ page, limit });
+            const response = await getPaginationArtwork({ page, limit, userID });
 
             if (response.data && response.data.data.artworks.length > 0) {
                 setArtworks((prevArtworks) => {
@@ -609,4 +613,55 @@ export const useTagArtwork = () => {
     }, []);
 
     return { tag, tagLoading, tagError };
+};
+
+export const useArtworkById = () => {
+    const [artworks, setArtworks] = useState([]); // Danh sách artworks
+    const [page, setPage] = useState(1); // Trang hiện tại
+    const [limit] = useState(20); // Số lượng artworks mỗi lần gọi
+    const [hasMore, setHasMore] = useState(true); // Kiểm tra nếu còn dữ liệu
+    const [artLoading, setArtLoading] = useState(false); // Trạng thái tải
+    const [errors, setErrors] = useState(null); // Trạng thái lỗi
+    const { user } = useUser();
+    const userID = user?.user?.userID;
+
+    // Hàm fetch data từ API
+    const fetchPaginatedArtworkById = async () => {
+        if (!hasMore) return; // Dừng nếu không còn dữ liệu
+
+        setArtLoading(true);
+        setErrors(null);
+
+        try {
+            const response = await getArtworkById({ page, limit, userID });
+
+            if (response.data && response.data.data.artworks.length > 0) {
+                setArtworks((prevArtworks) => {
+                    const seen = new Set(prevArtworks.map((art) => art.artID));
+                    const uniqueArtworks = response.data.data.artworks.filter((newArt) => !seen.has(newArt.artID));
+                    return [...prevArtworks, ...uniqueArtworks];
+                });
+                setHasMore(page < response.data.data.pagination.totalPages); // Cập nhật trạng thái hasMore
+            } else {
+                setHasMore(false); // Không còn dữ liệu
+            }
+        } catch (error) {
+            console.error('Error fetching paginated artworks:', error);
+            setErrors(error.message || 'An error occurred while fetching artworks.');
+        } finally {
+            setArtLoading(false);
+        }
+    };
+
+    // Tăng số trang và gọi API khi trang thay đổi
+    useEffect(() => {
+        fetchPaginatedArtworkById();
+    }, [page]);
+
+    // Hàm tải thêm dữ liệu (tăng trang)
+    const loadMore = () => {
+        if (hasMore) setPage((prevPage) => prevPage + 1);
+    };
+
+    return { artworks, artLoading, errors, hasMore, loadMore };
 };

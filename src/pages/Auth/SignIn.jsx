@@ -10,7 +10,6 @@ const cx = classNames.bind(styles);
 function SignIn() {
     const HOSTING_URL = import.meta.env.VITE_HOSTING_URL;
     const { formValues, errors, handleChange, handleSubmit } = useSignInForm();
-    const { handleGoogleLogin } = useSignInGoogle();
 
     return (
         <div className={cx('frame-left')}>

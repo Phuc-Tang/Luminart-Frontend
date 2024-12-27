@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
 import { getProfile, updateProfile } from '../api/users';
 import { useUser } from './useUserInfo';
 import { useNavigate } from 'react-router-dom';
@@ -188,3 +188,19 @@ export const useUpdateProfile = () => {
         handleSubmit
     };
 };
+
+const CustomSectionContext = createContext();
+
+export function CustomSectionProvider({ children }) {
+    const [customSection, setCustomSection] = useState(false);
+
+    return (
+        <CustomSectionContext.Provider value={{ customSection, setCustomSection }}>
+            {children}
+        </CustomSectionContext.Provider>
+    );
+}
+
+export function useCustomSection() {
+    return useContext(CustomSectionContext);
+}

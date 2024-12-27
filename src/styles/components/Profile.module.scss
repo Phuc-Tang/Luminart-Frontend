@@ -1,0 +1,206 @@
+.frame {
+    margin-top: 90px;
+}
+
+.cover {
+    position: relative;
+    width: 100%;
+    height: 500px;
+}
+
+.infomation {
+    height: auto;
+    position: absolute;
+    z-index: 1;
+    margin: 0 50px 40px;
+    left: 0;
+    bottom: 0;
+    display: grid;
+    grid-template-columns: 240px auto;
+}
+
+.infomation .avatar {
+    width: 220px;
+    height: 220px;
+}
+
+.infomation .avatar img {
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 5px solid transparent;
+    background: var(--gradiant-primary) border-box;
+}
+
+.infomation .info {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.infomation .info .user-follow {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.infomation .info .user-follow .follow-btn {
+    width: auto;
+    height: 40px;
+    cursor: pointer;
+    align-content: center;
+    text-align: center;
+    border-radius: 30px;
+    border: 2px solid var(--secondary);
+}
+
+.infomation .info .user-follow .follow-btn:hover {
+    background: var(--gradiant-primary);
+}
+
+.infomation .info .user-follow .follow-btn p {
+    padding: 0 20px;
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--secondary);
+}
+
+.infomation .info .user-follow .follow-btn:hover p {
+    color: var(--surface);
+}
+
+.infomation .info .username {
+    font-size: 64px;
+    font-weight: bolder;
+}
+
+.infomation .info .position {
+    font-size: 24px;
+    font-weight: 500;
+    margin-top: 10px;
+}
+
+.infomation .info .parameter {
+    display: flex;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.infomation .info .parameter p {
+    font-size: 20px;
+    font-weight: 500;
+}
+
+.change-cover-button {
+    display: flex;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    margin: 0 50px 40px;
+    width: 256px;
+    height: 50px;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    border-radius: 30px;
+    cursor: pointer;
+    background: var(--gradiant-primary);
+}
+
+.change-cover-button p {
+    font-size: 20px;
+    font-weight: bold;
+    margin-left: 5px;
+}
+
+.cover img {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.4) 10%, rgba(0, 0, 0, 0.3) 20%, rgba(0, 0, 0, 0) 70%);
+    pointer-events: none;
+}
+
+// Menu
+
+.tab-table {
+    position: sticky;
+    z-index: 101;
+    top: 0;
+    background-color: var(--base);
+}
+
+.menu {
+    width: 100%;
+    height: 70px;
+    display: flex;
+    padding: 0 50px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.menu .tab-button {
+    display: flex;
+    gap: 40px;
+    height: 50px;
+    align-items: center;
+}
+
+.menu .tab-button .mini-avatar {
+    display: none;
+}
+
+.menu .tab-button .mini-avatar.active {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.menu .tab-button .mini-avatar img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 5px;
+    object-position: center;
+}
+
+.menu .tab-button .mini-avatar p,
+.menu .tab-button .tab-name,
+.menu .edit-button {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.menu .tab-name {
+    width: 100px;
+    height: 70px;
+    text-align: center;
+    align-content: center;
+    cursor: pointer;
+}
+
+.menu .tab-name.active {
+    box-shadow: 0px 2px 0px var(--secondary);
+}
+
+.menu .edit-button {
+    display: flex;
+    gap: 5px;
+    cursor: pointer;
+}
+
+.menu .edit-button.active {
+    color: var(--secondary);
+}

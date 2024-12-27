@@ -25,7 +25,7 @@ export const signIn = async (email, password) => {
 
 export const signInGoogle = async () => {
     try {
-        const response = await api.get(`/auth/google`);
+        const response = await api.get(`/auth/google/callback`);
         return response.data; // Trả về dữ liệu khi đăng nhập thành công
     } catch (error) {
         if (error.response) {
