@@ -138,9 +138,12 @@
 }
 
 .frame-rank img {
+    width: 400px;
+    height: 400px;
     position: absolute;
-    top: 32%;
-    z-index: 1;
+    top: 0;
+    left: 0;
+    border-radius: 5px;
 }
 
 .raking-chart {
@@ -155,51 +158,6 @@
 
 .bottom-left-radius {
     border-bottom-left-radius: 5px;
-}
-
-.rank-1,
-.rank-2,
-.rank-3,
-.rank-4,
-.rank-5,
-.rank-6,
-.rank-7 {
-    width: 50px;
-    // background-color: aqua;
-}
-
-.rank-1 {
-    height: 200px;
-    // background-color: aqua;
-}
-
-.rank-12 {
-    height: 200px;
-    background-color: aqua;
-}
-
-.rank-2 {
-    height: 50px;
-}
-
-.rank-3 {
-    height: 70px;
-}
-
-.rank-4 {
-    height: 140px;
-}
-
-.rank-5 {
-    height: 300px;
-}
-
-.rank-6 {
-    height: 130px;
-}
-
-.rank-7 {
-    height: 270px;
 }
 
 .grid-container {

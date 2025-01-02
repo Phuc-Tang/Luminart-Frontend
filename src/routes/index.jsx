@@ -14,6 +14,12 @@ import { Detail, Upload } from '../pages/Artwork';
 // Profile
 import { Showcase, Gallery } from '../pages/Profile';
 
+//Discussion
+import Overview from '../pages/Discussion/Overview';
+import General from '../pages/Discussion/General';
+import Topics from '../pages/Discussion/Topics';
+import DetailDiscussion from '../pages/Discussion/Detail';
+
 // Admin
 import Dashboard from '../pages/Admin/Dashboard';
 import { Manage } from '../pages/Admin/Manage';
@@ -28,6 +34,12 @@ const publicRoutes = [
     //Artwork routes
     { path: '/artwork/:artID', component: Detail, protect: false, role: 1 },
     { path: '/artwork/upload/', component: Upload, protect: true, role: 1 },
+
+    //Discussion routes
+    { path: '/discussion/', component: Overview, protect: false, role: 1 },
+    { path: '/discussion/general', component: General, protect: false, role: 1 },
+    { path: '/discussion/:topic', component: Topics, protect: false, role: 1 },
+    { path: '/discussion/detail/:discussionID', component: DetailDiscussion, protect: false, role: 1 },
 
     //User routes
     { path: '/profile/:username', component: Showcase, layout: ProfileLayout, protect: false, role: 1 },

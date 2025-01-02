@@ -16,8 +16,6 @@ function Search() {
     const queryParams = new URLSearchParams(location.search);
     const keyword = queryParams.get('keyword');
 
-    console.log('Search for:', searchResult);
-
     return (
         <div className={cx('frame')}>
             <div className={cx('frame-tag')}>

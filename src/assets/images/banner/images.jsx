@@ -15,6 +15,13 @@ import image17 from '../banner/17.jpg';
 import image18 from '../banner/18.jpg';
 import image19 from '../banner/19.jpg';
 import image20 from '../banner/20.jpg';
+import discussion from '../banner/discussion-cover.jpg';
+import blog from '../banner/Blog.jpg';
+import learning from '../banner/learning.jpg';
+import news from '../banner/News.jpg';
+import tutorial from '../banner/Tutorial.jpg';
+import qna from '../banner/Q&A.jpg';
+import topicBackground from '../banner/topic-background.jpg';
 
 const image = {
     image1,
@@ -33,7 +40,14 @@ const image = {
     image17,
     image18,
     image19,
-    image20
+    image20,
+    discussion,
+    blog,
+    learning,
+    news,
+    tutorial,
+    qna,
+    topicBackground
 };
 
 export default image;

@@ -48,8 +48,6 @@ function ArtworkUpload() {
         handleStatusChange
     } = useCreateArtwork();
 
-    console.log(creErrors);
-
     const handleInputKeyDown = (e, input, setInput, type) => {
         const forbiddenChars = /[^a-zA-Z0-9\s]/;
         if (e.key === 'Enter' && input.trim()) {

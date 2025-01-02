@@ -1,12 +1,13 @@
-import { Header } from "../components";
+import { Header } from '../components';
+import { DiscussionProvider } from '../hooks/useDiscussion';
 
 function MainLayout({ children }) {
-  return (
-    <div>
-      <Header />
-      <div>{children}</div>
-    </div>
-  );
+    return (
+        <div>
+            <Header />
+            <DiscussionProvider>{children}</DiscussionProvider>
+        </div>
+    );
 }
 
 export default MainLayout;

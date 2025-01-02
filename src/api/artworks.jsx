@@ -131,7 +131,7 @@ export const unlikeArtwork = async (contentID) => {
 
 export const isLikedArtwork = async (contentID) => {
     try {
-        const response = await api.get(`/like/is-liked`, {
+        const response = await api.get(`/like/is-liked-artwork`, {
             params: { contentID }
         });
 
