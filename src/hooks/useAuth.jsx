@@ -193,7 +193,7 @@ export const verifyEmailForm = () => {
                 } else {
                     setMessage('Your email has been verified successfully!');
                     // Có thể điều hướng đến trang đăng nhập hoặc trang khác
-                    setTimeout(() => navigate('/login'), 3000); // Ví dụ chuyển hướng đến trang đăng nhập sau 3 giây
+                    setTimeout(() => navigate('/signin'), 3000); // Ví dụ chuyển hướng đến trang đăng nhập sau 3 giây
                 }
             });
         } else {
@@ -202,5 +202,5 @@ export const verifyEmailForm = () => {
         }
     }, [navigate]);
 
-    return { isResult, isLoading, message, error };
+    return { isLoading, message, error };
 };

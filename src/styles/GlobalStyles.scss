@@ -14,7 +14,7 @@ a {
 
 :root {
     // Color
-    --base: #121212;
+    --base: #0e0e0e;
     --upper: #181818;
     --highlight: #1c3a94;
     --secondary: #497dbd;
@@ -80,7 +80,7 @@ body {
 
 .custom-toast-error {
     width: auto;
-    height: 5rem;
+    height: auto;
     border-radius: 5px !important;
     background-color: var(--upper) !important;
 }
@@ -98,7 +98,7 @@ body {
 
 .custom-toast-success {
     width: auto;
-    height: 5rem;
+    height: auto;
     border-radius: 5px !important;
     background-color: var(--upper) !important;
 }
@@ -163,4 +163,12 @@ body {
     100% {
         transform: rotate(360deg);
     }
+}
+
+.ql-toolbar.ql-snow {
+    border: none !important;
+}
+
+.ql-container.ql-snow {
+    border: none !important;
 }

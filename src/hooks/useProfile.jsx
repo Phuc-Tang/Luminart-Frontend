@@ -24,6 +24,8 @@ export const useProfileUser = (username) => {
 
             try {
                 const userInfo = await getProfile(username);
+                console.log(userInfo);
+
                 if (userInfo?.error) {
                     setError(userInfo.error);
                     setProfileUser(null);

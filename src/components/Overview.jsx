@@ -1,7 +1,7 @@
 import classNames from 'classnames/bind';
 import styles from '../styles/components/Overview.module.scss';
 import image from '../assets/images/banner/images.jsx';
-import svg from '../assets/svg/index.jsx';
+import textures from '../assets/images/textures/textures.jsx';
 import { useUser } from '../hooks/useUserInfo.jsx';
 import { RevealDiscussion, RevealRank } from '../motion/Reveal.jsx';
 
@@ -17,16 +17,6 @@ const blogs = [
     { id: 3, type: 'news', title: 'Title for blog number 3', author: 'Name', alt: '3', cover: `${image.image3}` },
     { id: 4, type: 'news', title: 'Title for blog number 4', author: 'Name', alt: '4', cover: `${image.image4}` },
     { id: 5, type: 'news', title: 'Title for blog number 5', author: 'Name', alt: '5', cover: `${image.image5}` }
-];
-
-const ranking = [
-    { id: 1, color: '#ffd6ff', classOne: 'rank-1' },
-    { id: 2, color: '#e7c6ff', classOne: 'rank-2' },
-    { id: 3, color: '#c8b6ff', classOne: 'rank-3' },
-    { id: 4, color: '#b8c0ff', classOne: 'rank-4' },
-    { id: 5, color: '#bbd0ff', classOne: 'rank-5' },
-    { id: 6, color: '#d6baff', classOne: 'rank-6' },
-    { id: 7, color: '#f1b6ff', classOne: 'rank-7' }
 ];
 
 function Overview() {
@@ -64,16 +54,8 @@ function Overview() {
                 </Swiper>
             </div>
             <div className={cx('frame-rank')}>
-                <img src={svg.threeDWhitefeatureArtist} />
-                <div className={cx('raking-chart')}>
-                    {ranking.map((rank) => {
-                        return (
-                            <RevealRank key={rank.id} color={rank.color}>
-                                <div className={cx(`${rank.classOne}`)}></div>
-                            </RevealRank>
-                        );
-                    })}
-                </div>
+                <img src={textures.brushed} />
+                <div className={cx('raking-chart')}></div>
             </div>
             <div className={cx('frame-discussion')}>
                 <div className={cx('grid-container')}>
@@ -97,7 +79,7 @@ function Overview() {
                     </p>
                 </RevealDiscussion>
                 <RevealDiscussion className={cx('reveal-text')}>
-                    <a href="#">
+                    <a href="/discussion">
                         <div className={cx('discussion-button')}>Explore</div>
                     </a>
                 </RevealDiscussion>

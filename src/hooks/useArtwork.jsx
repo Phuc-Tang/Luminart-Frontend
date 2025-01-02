@@ -354,7 +354,7 @@ export const useAllArtwork = () => {
 export const usePaginatedArtwork = () => {
     const [artworks, setArtworks] = useState([]); // Danh sách artworks
     const [page, setPage] = useState(1); // Trang hiện tại
-    const [limit] = useState(14); // Số lượng artworks mỗi lần gọi
+    const [limit] = useState(28); // Số lượng artworks mỗi lần gọi
     const [hasMore, setHasMore] = useState(true); // Kiểm tra nếu còn dữ liệu
     const [artLoading, setArtLoading] = useState(false); // Trạng thái tải
     const [errors, setErrors] = useState(null); // Trạng thái lỗi

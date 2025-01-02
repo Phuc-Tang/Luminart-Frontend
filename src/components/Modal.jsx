@@ -1,14 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useUser } from '../hooks/useUserInfo';
 import classNames from 'classnames/bind';
-import styles from '../styles/components/Modal.module.scss';
-import { useArtworkById } from '../hooks/useArtwork';
-import { IoMdCloseCircle } from 'react-icons/io';
-import InfiniteScroll from 'react-infinite-scroll-component';
+
+//library
 import { motion } from 'framer-motion';
-import { ImSpinner10 } from 'react-icons/im';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+import styles from '../styles/components/Modal.module.scss';
+
+//custom hook
+import { useUser } from '../hooks/useUserInfo';
+import { useArtworkById } from '../hooks/useArtwork';
 import { useSectionContext } from '../hooks/useSection';
+import { useDiscussion } from '../hooks/useDiscussion';
+
+//icon
+import { FaImages } from 'react-icons/fa';
+import { ImSpinner10 } from 'react-icons/im';
+
+//until
+import { formatDate } from '../utils/string/stringUtils';
 
 const cx = classNames.bind(styles);
 
@@ -208,6 +220,152 @@ export const GalleryModal = ({ className, isGallery, setGallery, sectionID, user
                                         })
                                     )}
                                 </InfiniteScroll>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )
+    );
+};
+
+export const DiscussionModal = ({ className, isDiscussion, setDiscussion, topic, cate }) => {
+    const { user } = useUser();
+    const [showModal, setShowModal] = useState(false);
+    const userData = user?.user;
+    const currentDate = new Date();
+    const {
+        cover,
+        isSubmitting,
+        selectedCover,
+        isDiscussionErrors,
+        discussionForm,
+        handleCoverChange,
+        handleRemoveCover,
+        handleChange,
+        handleEditorChange,
+        handleSubmit
+    } = useDiscussion();
+    useEffect(() => {
+        setShowModal(isDiscussion);
+
+        if (isDiscussion) {
+            document.body.classList.add('no-scroll');
+        } else {
+            document.body.classList.remove('no-scroll');
+        }
+
+        return () => {
+            document.body.classList.remove('no-scroll');
+        };
+    }, [isDiscussion]);
+    const handleCloseModal = () => {
+        setDiscussion(false);
+    };
+
+    discussionForm.topic = topic;
+    discussionForm.category = cate;
+
+    const modules = {
+        toolbar: [
+            [{ font: [] }],
+            [{ header: [1, 2, false] }], // Header
+            ['bold', 'italic', 'underline', 'strike'], // Định dạng văn bản
+            [{ align: [] }], // Căn lề: trái, phải, giữa, đều
+            [{ list: 'ordered' }, { list: 'bullet' }], // Danh sách
+            ['link', 'image'], // Link và ảnh
+            ['clean'] // Xóa định dạng
+        ]
+    };
+
+    return (
+        showModal && (
+            <div className={className}>
+                {isSubmitting && !isDiscussionErrors && (
+                    <div className={cx('splash')}>
+                        <div className={cx('splash-content')}>
+                            <ImSpinner10 className={cx('spinner')} />
+                            <p>Creating discussion...</p>
+                        </div>
+                    </div>
+                )}
+                <div className={cx('discussion-modal')}>
+                    <form className={cx('discussion-form')} onSubmit={(e) => handleSubmit(e, handleCloseModal, topic)}>
+                        <div className={cx('title-modal')}>
+                            <p>New Your Thread</p>
+                        </div>
+                        <div className={cx('form-fields', 'input-content')}>
+                            <label>
+                                Title<span>*</span>
+                            </label>
+                            <input
+                                type="text"
+                                name="title"
+                                value={discussionForm.title || ''}
+                                onChange={handleChange}
+                                maxLength={100}
+                            />
+                            <p className={cx('sub-input')}>Please title your thread, up to 100 characters</p>
+                        </div>
+                        <div className={cx('form-fields', 'input-content')}>
+                            <label>
+                                Content<span>*</span>
+                            </label>
+                            <ReactQuill
+                                className={cx('editor')}
+                                modules={modules}
+                                value={discussionForm.content} // Nội dung hiện tại
+                                onChange={handleEditorChange} // Gọi hàm từ custom hook
+                                theme="snow" // Hoặc 'bubble' cho giao diện khác
+                            />
+                        </div>
+                        <div className={cx('form-button', 'handle-button')}>
+                            <div
+                                type="button"
+                                disabled={isSubmitting}
+                                className={cx('cancel')}
+                                onClick={handleCloseModal}
+                            >
+                                Cancel
+                            </div>
+                            <button type="submit" disabled={isSubmitting} className={cx('submit')}>
+                                Submit
+                            </button>
+                        </div>
+                    </form>
+                    <div className={cx('preview-frame', 'discussion-form')}>
+                        <div className={cx('title-modal')}>
+                            <p>Preview</p>
+                        </div>
+                        <div className={cx('detail-discussion')}>
+                            <div className={cx('detail-header')}>
+                                <a href="#">
+                                    <div className={cx('detail-user')}>
+                                        <div className={cx('avatar')}>
+                                            <img src={userData?.profile?.avatar} alt="avatar" />
+                                        </div>
+                                        <div className={cx('detail-info')}>
+                                            <div className={cx('fullname')}>{userData?.profile?.fullName}</div>
+                                            <div className={cx('create_time')}>{formatDate(currentDate)} - Today</div>
+                                        </div>
+                                    </div>
+                                </a>
+                                <div className={cx('detail-discussion-content')}>
+                                    <p className={cx('detail-title')}>
+                                        {discussionForm.title !== '' ? discussionForm.title : 'This is your new title'}
+                                    </p>
+                                    {/* Thay đổi lại cách thức hiển thị */}
+                                    <div className={cx('detail-content')}>
+                                        {discussionForm.content !== '' ? (
+                                            <div
+                                                className={cx('detail-content')}
+                                                dangerouslySetInnerHTML={{ __html: discussionForm.content }}
+                                            />
+                                        ) : (
+                                            <p>This is your new content</p>
+                                        )}
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

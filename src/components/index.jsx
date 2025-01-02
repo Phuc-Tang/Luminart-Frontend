@@ -6,3 +6,4 @@ export { default as Breadcrumb } from './Breadcrumb';
 export { default as Sidebar } from './Sidebar';
 export { default as Profile } from './Profile';
 export { default as MenuProfile } from './MenuProfile';
+export { default as BannerDiscussion } from './BannerDiscussion';
