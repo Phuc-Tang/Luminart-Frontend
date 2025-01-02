@@ -18,6 +18,7 @@ import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { validateArtwork } from '../utils/validators/artworkValidation';
 import { useProfileUser } from '../hooks/useProfile';
+import { useSocket } from '../hooks/useSocket';
 
 export const useCreateArtwork = () => {
     const { user } = useUser();
@@ -477,6 +478,7 @@ export const useDetailArtwork = (artID) => {
 };
 
 export const useLikeArtwork = (contentID) => {
+    const { socket } = useSocket();
     const [likeClick, setLikeClick] = useState(false);
     const [loading, setLoading] = useState(true);
     const [likeError, setLikeError] = useState(null);
@@ -491,7 +493,7 @@ export const useLikeArtwork = (contentID) => {
             }
 
             try {
-                const response = await isLikedArtwork(contentID); // API kiểm tra trạng thái like
+                const response = await isLikedArtwork(contentID);
                 if (response?.success) {
                     setLikeClick(response.isLiked); // Gán trạng thái ban đầu
                 } else {
@@ -527,13 +529,21 @@ export const useLikeArtwork = (contentID) => {
                     setLikeClick(false); // Cập nhật trạng thái thành chưa like
                 }
             } else {
-                // Nếu chưa like -> Like
+                // // Nếu chưa like -> Like
                 const response = await likeArtwork(contentID);
+
                 if (response?.error) {
                     setLikeError(response.error);
                 } else {
                     setLikeClick(true); // Cập nhật trạng thái thành đã like
                 }
+
+                socket.emit('sendNotification', {
+                    targetUserID: userID,
+                    contentID: contentID,
+                    type: 'like-artwork',
+                    link_url: `/artwork/${contentID}`
+                });
             }
         } catch (err) {
             setLikeError(err.message || 'An unexpected error occurred.');

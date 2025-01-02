@@ -54,9 +54,11 @@ function DetailArtwork() {
         artwork?.status
     );
     const { artDeleting, artDelError, deleteArtworkHandler } = useDeleteArtwork();
+    const userIDOfArtwork = artwork?.user?.userID;
     const { comments, createComment, deleteComment, updateComment, replyComment, refreshComments } = useArtworkComments(
         artID,
-        userID
+        userID,
+        userIDOfArtwork
     );
 
     useEffect(() => {
@@ -76,6 +78,10 @@ function DetailArtwork() {
     if (errors) {
         return <div>Error loading artwork details</div>;
     }
+
+    const sendNotifications = () => {
+        toggleLike(userIDOfArtwork);
+    };
 
     const focusTextField = () => {
         if (inputRef.current) {
@@ -400,7 +406,7 @@ function DetailArtwork() {
                                     </a>
                                 </div>
                             ) : (
-                                <div className={cx('favorite')} onClick={toggleLike}>
+                                <div className={cx('favorite')} onClick={sendNotifications}>
                                     {likeClick ? (
                                         <div className={cx('yes')}>
                                             <MdFavorite />
