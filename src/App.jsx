@@ -7,13 +7,49 @@ import { Fragment } from 'react';
 import { publicRoutes } from './routes';
 import { MainLayout } from './layouts';
 import { useUser } from './hooks/useUserInfo';
-
+import { useSocket } from './hooks/useSocket';
+import { ToastContainer, toast, Slide } from 'react-toastify';
 const cx = classNames.bind(styles);
 
 function App() {
     const HOSTING_URL = import.meta.env.VITE_HOSTING_URL;
     const { user } = useUser();
+    const [notification, setNotification] = useState(null);
+    const { socket } = useSocket(); // Sử dụng socket từ context
+    const userID = user?.user?.userID;
 
+    useEffect(() => {
+        // Lắng nghe thông báo khi có dữ liệu mới từ server
+        if (socket && userID) {
+            socket.emit('authenticate', userID);
+            socket.on('notification', (data) => {
+                console.log(data);
+                toast(
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <img
+                            src={data && data.avatarSender}
+                            width={50}
+                            height={50}
+                            alt="Toast Icon"
+                            style={{ borderRadius: '50%', marginRight: '10px' }}
+                        />
+                        <span>{data && data.message}</span>
+                    </div>,
+                    {
+                        className: 'custom-toast-success',
+                        bodyClassName: 'custom-body-success',
+                        progressClassName: 'custom-progress-success'
+                    }
+                );
+            });
+
+            // Cleanup khi component bị hủy
+            return () => {
+                socket.off('notification');
+                socket.off('authenticate');
+            };
+        }
+    }, [socket, userID]);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
@@ -74,6 +110,21 @@ function App() {
                     })}
                 </Routes>
             </div>
+            <ToastContainer
+                toastClassName={cx('custom-toast')}
+                bodyClassName={cx('custom-body')}
+                progressClassName={cx('custom-progress')}
+                position="top-left"
+                autoClose={4000}
+                hideProgressBar={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="colored"
+                transition={Slide}
+            />
         </Router>
     );
 }

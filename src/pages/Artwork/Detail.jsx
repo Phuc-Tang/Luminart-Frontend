@@ -22,6 +22,7 @@ import { useArtworkComments } from '../../hooks/useComment';
 import { handleFullScreen } from '../../utils/fullscreen/fullscreen';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination } from 'swiper/modules';
+import { useSocket } from '../../hooks/useSocket';
 import 'swiper/scss';
 import 'swiper/scss/navigation';
 import 'swiper/scss/pagination';
@@ -53,10 +54,12 @@ function DetailArtwork() {
         artID,
         artwork?.status
     );
+    const userIDOfArtwork = artwork?.user?.userID;
     const { artDeleting, artDelError, deleteArtworkHandler } = useDeleteArtwork();
     const { comments, createComment, deleteComment, updateComment, replyComment, refreshComments } = useArtworkComments(
         artID,
-        userID
+        userID,
+        userIDOfArtwork
     );
 
     useEffect(() => {
@@ -89,6 +92,7 @@ function DetailArtwork() {
             alert('Comment cannot be empty.');
             return;
         }
+
         createComment(newComment);
         setNewComment('');
 
@@ -105,6 +109,7 @@ function DetailArtwork() {
             alert('Comment cannot be empty.');
             return;
         }
+
         replyComment(parentCommentID, replyComments);
         setReplyComments('');
 
@@ -364,6 +369,10 @@ function DetailArtwork() {
             })
         );
     };
+    const sendNotifications = () => {
+        toggleLike(userIDOfArtwork);
+    };
+    //
 
     return (
         <div className={cx('frame')}>
@@ -400,7 +409,7 @@ function DetailArtwork() {
                                     </a>
                                 </div>
                             ) : (
-                                <div className={cx('favorite')} onClick={toggleLike}>
+                                <div className={cx('favorite')} onClick={sendNotifications}>
                                     {likeClick ? (
                                         <div className={cx('yes')}>
                                             <MdFavorite />

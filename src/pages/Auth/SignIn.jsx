@@ -17,7 +17,7 @@ function SignIn() {
                 <p className={cx('title')}>Sign in account</p>
                 <p className={cx('sub-title')}>Enter your personal data to login your account</p>
                 <div className={cx('social')}>
-                    <a hret="">
+                    <a href="">
                         <div className={cx('facebook')}>
                             <FaFacebook />
                         </div>

@@ -18,6 +18,7 @@ import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { validateArtwork } from '../utils/validators/artworkValidation';
 import { useProfileUser } from '../hooks/useProfile';
+import { useSocket } from '../hooks/useSocket';
 
 export const useCreateArtwork = () => {
     const { user } = useUser();
@@ -360,7 +361,7 @@ export const usePaginatedArtwork = () => {
     const [errors, setErrors] = useState(null); // Trạng thái lỗi
     const { user } = useUser();
     const userID = user?.user?.userID;
-
+    console.log(userID);
     // Hàm fetch data từ API
     const fetchPaginatedArtwork = async () => {
         if (!hasMore) return; // Dừng nếu không còn dữ liệu
@@ -480,6 +481,7 @@ export const useLikeArtwork = (contentID) => {
     const [likeClick, setLikeClick] = useState(false);
     const [loading, setLoading] = useState(true);
     const [likeError, setLikeError] = useState(null);
+    const { socket } = useSocket();
 
     // Kiểm tra trạng thái "đã like" ban đầu từ API
     useEffect(() => {
@@ -508,12 +510,11 @@ export const useLikeArtwork = (contentID) => {
     }, [contentID]);
 
     // Toggle trạng thái like/unlike
-    const toggleLike = async () => {
+    const toggleLike = async (userID) => {
         if (!contentID) {
             setLikeError('ContentID is required.');
             return;
         }
-
         setLikeError(null);
 
         try {
@@ -529,6 +530,13 @@ export const useLikeArtwork = (contentID) => {
             } else {
                 // Nếu chưa like -> Like
                 const response = await likeArtwork(contentID);
+                socket.emit('sendNotification', {
+                    targetUserID: userID,
+                    contentID: contentID,
+                    type: 'like-artwork',
+                    link_url: `/artwork/${contentID}`
+                });
+
                 if (response?.error) {
                     setLikeError(response.error);
                 } else {

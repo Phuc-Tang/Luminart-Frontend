@@ -2,7 +2,7 @@ import classNames from 'classnames/bind';
 import styles from '../../styles/pages/Auth.module.scss';
 import 'react-toastify/dist/ReactToastify.css';
 import { FaFacebook, FaGoogle, FaGithub } from 'react-icons/fa';
-import { Slide, toast, ToastContainer } from 'react-toastify';
+// import { Slide, ToastContainer } from 'react-toastify';
 import { useSignUpForm } from '../../hooks/useAuth';
 
 const cx = classNames.bind(styles);
@@ -62,21 +62,6 @@ function SignUp() {
                         <div className={cx('sign-up')}>Sign In</div>
                     </a>
                 </div>
-                <ToastContainer
-                    toastClassName={cx('custom-toast')}
-                    bodyClassName={cx('custom-body')}
-                    progressClassName={cx('custom-progress')}
-                    position="top-left"
-                    autoClose={3000}
-                    hideProgressBar={false}
-                    closeOnClick
-                    rtl={false}
-                    pauseOnFocusLoss
-                    draggable
-                    pauseOnHover
-                    theme="colored"
-                    transition={Slide}
-                />
             </div>
         </div>
     );
