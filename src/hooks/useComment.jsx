@@ -7,8 +7,9 @@ import {
     updateCommentArtwork,
     replyCommentArtwork
 } from '../api/comments';
+import { useSocket } from '../hooks/useSocket';
 
-export const useArtworkComments = (artID, userID, commentID) => {
+export const useArtworkComments = (artID, userID, commentID, TargetUserIDOfArtwork) => {
     const [comments, setComments] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -21,6 +22,8 @@ export const useArtworkComments = (artID, userID, commentID) => {
 
     const [deleting, setDeleting] = useState(false);
     const [deleteError, setDeleteError] = useState(null);
+
+    const { socket } = useSocket();
 
     const updateNestedComments = (comments, commentID, updatedContent) => {
         return comments.map((comment) => {
@@ -99,6 +102,13 @@ export const useArtworkComments = (artID, userID, commentID) => {
                 return;
             }
 
+            socket.emit('sendNotification', {
+                targetUserID: TargetUserIDOfArtwork,
+                contentID: artID,
+                type: 'comment-artwork',
+                link_url: `/artwork/${artID}`
+            });
+
             setCreating(true);
             setCreateError(null);
 
@@ -120,7 +130,7 @@ export const useArtworkComments = (artID, userID, commentID) => {
                 setCreating(false);
             }
         },
-        [userID, artID]
+        [userID, artID, TargetUserIDOfArtwork]
     );
 
     // Fetch comments
@@ -196,6 +206,13 @@ export const useArtworkComments = (artID, userID, commentID) => {
                 return;
             }
 
+            socket.emit('sendNotification', {
+                targetUserID: TargetUserIDOfArtwork,
+                contentID: artID,
+                type: 'comment-artwork',
+                link_url: `/artwork/${artID}`
+            });
+
             setReplying(true);
             setReplyError(null);
 
@@ -220,7 +237,7 @@ export const useArtworkComments = (artID, userID, commentID) => {
                 setReplying(false);
             }
         },
-        [userID, artID]
+        [userID, artID, TargetUserIDOfArtwork]
     );
 
     // Delete a comment
