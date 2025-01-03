@@ -64,3 +64,37 @@ export const createDiscussion = async (formData) => {
         return { error: 'An error occurred while creating discussion.' };
     }
 };
+
+export const likeDiscussion = async (contentID) => {
+    try {
+        const response = await api.post('/like/like-discussion', null, {
+            params: { contentID }
+        });
+        return response.data;
+    } catch (error) {
+        return { error: error.response?.data || 'An error occurred while liking discussion.' };
+    }
+};
+
+export const unlikeDiscussion = async (contentID) => {
+    try {
+        const response = await api.delete('/like/unlike-discussion', {
+            params: { contentID }
+        });
+        return response.data;
+    } catch (error) {
+        return { error: error.response?.data || 'An error occurred while unliking discussion.' };
+    }
+};
+
+export const isLikedDiscussion = async (contentID) => {
+    try {
+        const response = await api.get(`/like/is-liked-discussion`, {
+            params: { contentID }
+        });
+
+        return response.data;
+    } catch (error) {
+        return { error: error.response?.data || 'An error occurred while checking is like discussion.' };
+    }
+};

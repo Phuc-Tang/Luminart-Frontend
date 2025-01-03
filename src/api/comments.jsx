@@ -79,3 +79,76 @@ export const deleteCommentArtwork = async (commentID) => {
     }
     return { error: 'An error occurred while delete comment of artwork.' };
 };
+
+export const createCommentDiscussion = async (userID, discussionID, content) => {
+    try {
+        const response = await api.post(`/comment/discussion/new-comment`, {
+            userID,
+            discussionID,
+            content
+        });
+        return response.data;
+    } catch (error) {
+        if (error) {
+            return { error: error.response.data };
+        }
+    }
+    return { error: 'An error occurred while comments of discussion.' };
+};
+
+export const getCommentDiscussion = async (discussionID) => {
+    try {
+        const response = await api.get(`/comment/discussion/all-comment/${discussionID}`);
+        return response;
+    } catch (error) {
+        if (error) {
+            return { error: error.response.data };
+        }
+    }
+    return { error: 'An error occurred while get all comments of discussion.' };
+};
+
+export const updateCommentDiscussion = async (commentID, content) => {
+    try {
+        const response = await api.patch(`/comment/discussion/update-comment/`, {
+            commentID,
+            content
+        });
+        console.log(response.data);
+        return response.data;
+    } catch (error) {
+        if (error) {
+            return { error: error.response.data };
+        }
+    }
+    return { error: 'An error occurred while update comments of discussion.' };
+};
+
+export const replyCommentDiscussion = async (parentCommentID, discussionID, userID, content) => {
+    try {
+        const response = await api.post(`/comment/discussion/${parentCommentID}/reply-comment`, {
+            userID,
+            discussionID,
+            content
+        });
+        console.log(response.data);
+        return response.data;
+    } catch (error) {
+        if (error) {
+            return { error: error.response.data };
+        }
+    }
+    return { error: 'An error occurred while reply comment of discussion.' };
+};
+
+export const deleteCommentDiscussion = async (commentID) => {
+    try {
+        const response = await api.delete(`/comment/discussion/delete-comment/${commentID}`);
+        return response.data;
+    } catch (error) {
+        if (error) {
+            return { error: error.response.data };
+        }
+    }
+    return { error: 'An error occurred while delete comment of discussion.' };
+};

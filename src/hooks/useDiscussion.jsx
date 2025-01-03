@@ -1,9 +1,19 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { createDiscussion, getAllDiscussion, getDetailDiscussion, getDiscussionsByTopic } from '../api/discussion';
+import {
+    createDiscussion,
+    getAllDiscussion,
+    getDetailDiscussion,
+    getDiscussionsByTopic,
+    isLikedDiscussion,
+    likeDiscussion,
+    unlikeDiscussion
+} from '../api/discussion';
 import { validateDiscussion } from '../utils/validators/discussionValidation';
 import { toast } from 'react-toastify';
 import { useUser } from './useUserInfo';
 import { useNavigate } from 'react-router-dom';
+import { useSocket } from './useSocket';
+import { unlikeArtwork } from '../api/artworks';
 
 // Tạo Context
 const DiscussionContext = createContext();
@@ -22,6 +32,8 @@ export const DiscussionProvider = ({ children }) => {
     const [creationErrors, setCreationErrors] = useState(null);
 
     const [detailDiscussion, setDetailDiscussion] = useState(null);
+
+    const [likeClick, setLikeClick] = useState(false);
 
     const [discussionForm, setDiscussionForm] = useState({
         userID: user?.user?.userID || '',
@@ -245,4 +257,82 @@ export const DiscussionProvider = ({ children }) => {
 // Custom Hook to use the Discussion context
 export const useDiscussion = () => {
     return useContext(DiscussionContext);
+};
+
+export const useLikeDiscussion = (contentID) => {
+    const { socket } = useSocket();
+    const [likeClick, setLikeClick] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [likeError, setLikeError] = useState(null);
+
+    // Kiểm tra trạng thái "đã like" ban đầu từ API
+    useEffect(() => {
+        const fetchInitialLikeStatus = async () => {
+            if (!contentID) {
+                setLikeError('ContentID is required.');
+                setLoading(false);
+                return;
+            }
+
+            try {
+                const response = await isLikedDiscussion(contentID);
+                if (response?.success) {
+                    setLikeClick(response.isLiked); // Gán trạng thái ban đầu
+                } else {
+                    setLikeError(response?.message || 'Failed to fetch like status.');
+                }
+            } catch (err) {
+                setLikeError(err.message || 'An unexpected error occurred.');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchInitialLikeStatus();
+    }, [contentID]);
+
+    // Toggle trạng thái like/unlike
+    const toggleLike = async (userID) => {
+        if (!contentID) {
+            setLikeError('ContentID is required.');
+            return;
+        }
+
+        setLikeError(null);
+
+        try {
+            setLoading(true);
+            if (likeClick) {
+                // Nếu đã like -> Unlike
+                const response = await unlikeDiscussion(contentID);
+                if (response?.error) {
+                    setLikeError(response.error);
+                } else {
+                    setLikeClick(false); // Cập nhật trạng thái thành chưa like
+                }
+            } else {
+                // // Nếu chưa like -> Like
+                const response = await likeDiscussion(contentID);
+
+                if (response?.error) {
+                    setLikeError(response.error);
+                } else {
+                    setLikeClick(true); // Cập nhật trạng thái thành đã like
+                }
+
+                socket.emit('sendNotification', {
+                    targetUserID: userID,
+                    contentID: contentID,
+                    type: 'like-discussion',
+                    link_url: `/discussion/${contentID}`
+                });
+            }
+        } catch (err) {
+            setLikeError(err.message || 'An unexpected error occurred.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return { likeClick, toggleLike, likeError, loading };
 };

@@ -1,30 +1,47 @@
+import React, { createContext, useState, useEffect, useCallback } from 'react';
 import { getNotificationOfUser } from '../api/notification';
-import { useEffect, useState } from 'react';
 
-export const useAllNotification = () => {
-    const [isNotification, setIsNotification] = useState(null);
-    const [isNotificationLoading, setNotificationLoading] = useState(true);
-    const [isNotificationError, setNotificationError] = useState(null);
-    // const [totalNotifications, setTotalNotifications] = useState(0)
-    useEffect(() => {
-        const fetchAllUser = async () => {
-            try {
-                const response = await getNotificationOfUser();
-                console.log(response);
-                if (!response.success) {
-                    setNotificationError(response.error);
-                } else {
-                    setIsNotification(response.notifications);
-                    // setTotalNotifications((response.notifications).length);
-                }
-            } catch (error) {
-                setNotificationError(error);
-            } finally {
-                setNotificationLoading(false);
+export const NotificationContext = createContext();
+
+export const NotificationProvider = ({ children }) => {
+    const [notifications, setNotifications] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    // Hàm fetch thông báo
+    const fetchNotifications = useCallback(async () => {
+        try {
+            setLoading(true);
+            const response = await getNotificationOfUser();
+            if (response.success) {
+                setNotifications(response.notifications);
+            } else {
+                setError(response.error);
             }
-        };
-
-        fetchAllUser();
+        } catch (err) {
+            setError(err);
+        } finally {
+            setLoading(false);
+        }
     }, []);
-    return { isNotification, isNotificationLoading, isNotificationError };
+
+    // Cập nhật thông báo định kỳ
+    useEffect(() => {
+        fetchNotifications(); // Gọi ngay lần đầu
+        const interval = setInterval(fetchNotifications, 5000); // Cập nhật mỗi 5 giây
+        return () => clearInterval(interval);
+    }, [fetchNotifications]);
+
+    return (
+        <NotificationContext.Provider
+            value={{
+                notifications,
+                loading,
+                error,
+                refetch: fetchNotifications // Hàm để refetch khi cần
+            }}
+        >
+            {children}
+        </NotificationContext.Provider>
+    );
 };

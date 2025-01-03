@@ -6,7 +6,8 @@ import io from 'socket.io-client';
 const SocketContext = createContext();
 
 // Cấu hình URL của server Socket.IO
-const SOCKET_SERVER_URL = 'http://localhost:7000';
+const SOCKET_SERVER_URL = import.meta.env.VITE_SOCKET_API;
+// const SOCKET_SERVER_URL = '192.168.1.4:7000';
 
 export const SocketProvider = ({ children }) => {
     const [socket, setSocket] = useState(null);

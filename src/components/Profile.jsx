@@ -1,12 +1,12 @@
 import classNames from 'classnames/bind';
 import styles from '../styles/components/Profile.module.scss';
-import { useProfileUser } from '../hooks/useProfile';
+import { useChangeCover, useProfileUser } from '../hooks/useProfile';
 import { useUser } from '../hooks/useUserInfo';
 import { useEffect, useState } from 'react';
 import { useStickyActive } from '../hooks/useStickyActive';
 import { useParams } from 'react-router-dom';
 import { RiImageAddFill } from 'react-icons/ri';
-import { FaPalette } from 'react-icons/fa';
+import { CiCircleRemove } from 'react-icons/ci';
 
 const cx = classNames.bind(styles);
 
@@ -17,6 +17,17 @@ function Profile() {
     const [activeTab, setActiveTab] = useState('Overview');
     const [customSection, setCustomSection] = useState(false);
     const { profileUser, loading, error } = useProfileUser(username);
+    const {
+        isChanging,
+        isCoverError,
+        isCoverPreview,
+        isCoverValue,
+        handleChangeCover,
+        handleCancelCover,
+        handleCoverPreview,
+        handleSubmit
+    } = useChangeCover();
+
     const userInfo = profileUser && profileUser.user;
     const cover = userInfo && userInfo.profile.cover;
     const avatar = userInfo && userInfo.profile.avatar;
@@ -47,16 +58,56 @@ function Profile() {
                         <div className={cx('parameter')}>
                             <p className={cx('follower')}>{follower} Follower</p>
                             <p className={cx('following')}>{following} Following</p>
-                            <p className={cx('artwork')}>15 Artworks</p>
-                            <p className={cx('discussion')}>2 Discussions</p>
                         </div>
                     </div>
                 </div>
-                <div className={cx('change-cover-button')}>
-                    <RiImageAddFill />
-                    <p>Edit Cover Image</p>
-                </div>
-                <img src={`${cover}`} alt="cover" />
+
+                <form className={cx('form-change-cover')} onSubmit={handleSubmit}>
+                    {isCoverPreview === null ? null : (
+                        <label className={cx('cancel-change-cover-button')} onClick={handleCancelCover}>
+                            <CiCircleRemove />
+                        </label>
+                    )}
+                    {isCoverPreview !== null ? (
+                        <button type="submit" className={cx('change-cover-button')}>
+                            <p>{isChanging ? 'Submitting' : 'Submit'}</p>
+                        </button>
+                    ) : cover === null ? (
+                        <label className={cx('change-cover-button')}>
+                            <RiImageAddFill />
+                            <p>Add Cover Image</p>
+                            <input
+                                name="cover"
+                                type="file"
+                                accept="image/*"
+                                style={{ display: 'none' }}
+                                onChange={handleChangeCover}
+                            />
+                        </label>
+                    ) : (
+                        <label className={cx('change-cover-button')}>
+                            <RiImageAddFill />
+                            <p>Change Cover Image</p>
+                            <input
+                                name="cover"
+                                type="file"
+                                accept="image/*"
+                                style={{ display: 'none' }}
+                                onChange={handleChangeCover}
+                            />
+                        </label>
+                    )}
+                </form>
+
+                {cover === null && isCoverPreview === null ? (
+                    <div>Cover</div>
+                ) : (
+                    <img
+                        src={`${isCoverPreview === null ? (!cover ? 'No have cover' : cover) : isCoverPreview}`}
+                        alt="cover"
+                    />
+                )}
+
                 <div className={cx('overlay')}></div>
             </div>
         </div>

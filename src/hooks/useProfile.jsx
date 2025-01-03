@@ -1,50 +1,87 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { getProfile, updateProfile } from '../api/users';
+import { changeCoverProfile, getProfile, updateProfile } from '../api/users';
 import { useUser } from './useUserInfo';
 import { useNavigate } from 'react-router-dom';
 import { validateProfile } from '../utils/validators/profileValidation';
 import { toast } from 'react-toastify';
 
+const ProfileContext = createContext();
+const CustomSectionContext = createContext();
+
 export const useProfileUser = (username) => {
-    const [profileUser, setProfileUser] = useState(null);
-    const [loading, setLoading] = useState(false); // Đặt mặc định là false
-    const [error, setError] = useState(null);
+    const [contextState, setContextState] = useState({
+        profileUser: null,
+        loading: false,
+        error: null
+    });
+
+    const context = useContext(ProfileContext);
 
     useEffect(() => {
         const fetchProfile = async () => {
             if (!username) {
-                setProfileUser(null);
-                setError('Username is required');
-                setLoading(false);
+                setContextState({
+                    profileUser: null,
+                    loading: false,
+                    error: 'Username is required'
+                });
                 return;
             }
 
-            setLoading(true); // Chỉ bật loading khi username hợp lệ
-            setError(null);
+            setContextState((prev) => ({
+                ...prev,
+                loading: true,
+                error: null
+            }));
 
             try {
                 const userInfo = await getProfile(username);
-                console.log(userInfo);
 
                 if (userInfo?.error) {
-                    setError(userInfo.error);
-                    setProfileUser(null);
+                    setContextState({
+                        profileUser: null,
+                        loading: false,
+                        error: userInfo.error
+                    });
                 } else {
-                    setProfileUser(userInfo);
+                    setContextState({
+                        profileUser: userInfo,
+                        loading: false,
+                        error: null
+                    });
                 }
             } catch (err) {
                 console.error('Error fetching user info:', err.message);
-                setError(err.message);
-                setProfileUser(null);
-            } finally {
-                setLoading(false); // Đảm bảo loading kết thúc
+                setContextState({
+                    profileUser: null,
+                    loading: false,
+                    error: err.message
+                });
             }
         };
 
         fetchProfile();
     }, [username]);
 
-    return { profileUser, loading, error };
+    // Nếu đã có context, sử dụng dữ liệu từ context
+    if (context) {
+        return context;
+    }
+
+    // Nếu không có context, trả về state local
+    return contextState;
+};
+
+export const ProfileProvider = ({ children }) => {
+    const [state, setState] = useState({
+        profileUser: null,
+        loading: false,
+        error: null
+    });
+
+    return (
+        <ProfileContext.Provider value={{ ...state, setContextState: setState }}>{children}</ProfileContext.Provider>
+    );
 };
 
 export const useUpdateProfile = () => {
@@ -187,7 +224,94 @@ export const useUpdateProfile = () => {
     };
 };
 
-const CustomSectionContext = createContext();
+export const useChangeCover = () => {
+    const { user } = useUser();
+    const [isChanging, setChanging] = useState(false);
+    const [isCoverError, setCoverError] = useState(null);
+    const [isCoverPreview, setCoverPreview] = useState(null);
+    const [isCoverValue, setCoverValue] = useState({
+        userID: user?.user?.userID || '',
+        cover: user?.user?.profile?.cover || null
+    });
+
+    const handleChangeCover = (e) => {
+        const { name, files } = e.target;
+
+        if (files && files[0]) {
+            const file = files[0];
+            setCoverValue((prev) => ({
+                ...prev,
+                [name]: file
+            }));
+            const previewUrl = URL.createObjectURL(file);
+            setCoverPreview(previewUrl);
+        }
+    };
+
+    const handleCoverPreview = (file) => {
+        const previewUrl = URL.createObjectURL(file);
+        setCoverPreview(previewUrl);
+    };
+
+    const handleCancelCover = () => {
+        setCoverValue((prev) => ({
+            ...prev,
+            cover: user?.user?.profile?.cover || null
+        }));
+        setCoverPreview(null); // Xóa URL preview
+        setCoverError(null);
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setChanging(true);
+
+        try {
+            const formData = new FormData();
+            // formData.append('userID', isCoverValue.userID);
+            if (isCoverValue.cover) {
+                formData.append('cover', isCoverValue.cover);
+            }
+
+            const response = await changeCoverProfile(formData);
+            if (response.error) {
+                toast.error(response.error, {
+                    className: 'custom-toast-success',
+                    bodyClassName: 'custom-body-success',
+                    progressClassName: 'custom-progress-success'
+                });
+                setCoverError(response.error);
+                return;
+            }
+
+            toast.success(response.message, {
+                className: 'custom-toast-success',
+                bodyClassName: 'custom-body-success',
+                progressClassName: 'custom-progress-success'
+            });
+        } catch (error) {
+            console.log(error);
+            toast.error('Something went wrong. Please try again later.', {
+                className: 'custom-toast-error',
+                bodyClassName: 'custom-body-error',
+                progressClassName: 'custom-progress-error'
+            });
+        } finally {
+            setChanging(false);
+        }
+    };
+
+    return {
+        isChanging,
+        isCoverError,
+        isCoverPreview,
+        isCoverValue,
+        handleChangeCover,
+        handleCancelCover,
+        handleCoverPreview,
+        handleSubmit
+    };
+};
 
 export function CustomSectionProvider({ children }) {
     const [customSection, setCustomSection] = useState(false);

@@ -3,7 +3,7 @@ import styles from '../styles/layouts/ProfileLayout.module.scss';
 
 //component
 import { Header, Profile, MenuProfile } from '../components';
-import { CustomSectionProvider } from '../hooks/useProfile';
+import { CustomSectionProvider, ProfileProvider } from '../hooks/useProfile';
 
 //custom hook
 import { SectionProvider } from '../hooks/useSection';
@@ -17,9 +17,11 @@ function ProfileLayout({ children }) {
                 <Header />
                 <Profile />
                 <MenuProfile />
-                <SectionProvider>
-                    <div>{children}</div>
-                </SectionProvider>
+                <ProfileProvider>
+                    <SectionProvider>
+                        <div>{children}</div>
+                    </SectionProvider>
+                </ProfileProvider>
             </CustomSectionProvider>
         </div>
     );

@@ -6,13 +6,18 @@ import { ToastContainer, Slide } from 'react-toastify';
 import { ImSpinner10 } from 'react-icons/im';
 import { IoMdCheckmark } from 'react-icons/io';
 import { MdCancel } from 'react-icons/md';
+import { formatDate } from '../../utils/string/stringUtils';
 
 const cx = classNames.bind(styles);
 
 function Update() {
     const { isSubmitting, updateError, updateValue, avatarPreview, handleChange, handleSubmit, handleCancelAvatar } =
         useUpdateProfile();
-    console.log(updateValue.bio);
+
+    const formatDateForInput = (dateString) => {
+        const date = new Date(dateString);
+        return date.toISOString().slice(0, 10);
+    };
 
     return (
         <div className={cx('frame')}>
@@ -207,9 +212,14 @@ function Update() {
                             className={cx({ active: updateError?.birth })}
                             type="date"
                             name="birth"
-                            value={updateValue.birth}
+                            value={updateValue.birth ? new Date(updateValue.birth).toLocaleDateString('en-CA') : ''}
                             onChange={handleChange}
                         />
+                        <div className={cx('note')}>
+                            <div>
+                                <p>Month/Day/Year</p>
+                            </div>
+                        </div>
                     </div>
                     <div className={cx('update-form')}>
                         <label id="bio">Bio 😉</label>
