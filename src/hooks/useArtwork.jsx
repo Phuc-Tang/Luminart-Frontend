@@ -510,7 +510,7 @@ export const useLikeArtwork = (contentID) => {
     }, [contentID]);
 
     // Toggle trạng thái like/unlike
-    const toggleLike = async () => {
+    const toggleLike = async (userID) => {
         if (!contentID) {
             setLikeError('ContentID is required.');
             return;

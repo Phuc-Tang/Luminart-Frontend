@@ -13,6 +13,7 @@ export const signIn = async (email, password) => {
             email,
             password
         });
+        console.log(response.data);
 
         return response.data;
     } catch (error) {
@@ -87,7 +88,7 @@ export const getUserInfo = async () => {
 
 export const getProfile = async (username) => {
     try {
-        const response = await axios.get(`${API_URL}/user/profile/${username}`, {});
+        const response = await api.get(`/user/profile/${username}`, {});
 
         return response.data;
     } catch (error) {
@@ -95,6 +96,20 @@ export const getProfile = async (username) => {
             return { error: error.response.data };
         }
         return { error: 'An error occurred while registering.' };
+    }
+};
+
+export const changeCoverProfile = async (formData) => {
+    try {
+        const response = await api.patch(`/user/update-cover-profile`, formData);
+        console.log(response);
+
+        return response.data;
+    } catch (error) {
+        if (error) {
+            return { error: error.response.data };
+        }
+        return { error: 'An error occurred while change cover profile.' };
     }
 };
 

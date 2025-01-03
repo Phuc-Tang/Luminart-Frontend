@@ -14,6 +14,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSearchArtwork } from '../hooks/useSearch';
 import Home from '../pages/Home/Home';
+import Notification from './Notification';
 
 const cx = classNames.bind(styles);
 
@@ -21,10 +22,12 @@ function Header() {
     const HOSTING_URL = import.meta.env.VITE_HOSTING_URL;
     const navigate = useNavigate();
     const [isDropdownActive, setDropdownActive] = useState(false); // Trạng thái dropdown
+    const [isDropdownNoti, setDropdownNoti] = useState(false);
     const { user, signOut } = useUser();
     const [keyword, setKeyword] = useState('');
     const { isSuggest, searchResult, isSearchLoading, isSearchError } = useSearchArtwork(keyword);
-    const dropdownRef = useRef(null);
+    const dropdownAvatarRef = useRef(null);
+    const dropdownNotiRef = useRef(null);
 
     const handleLogout = async () => {
         await signOut();
@@ -33,6 +36,10 @@ function Header() {
 
     const handleToggleDropdown = () => {
         setDropdownActive((prev) => !prev); // Toggle trạng thái
+    };
+
+    const handleToggleNoti = () => {
+        setDropdownNoti((prev) => !prev); // Toggle trạng thái
     };
 
     const handleSearchChange = (e) => {
@@ -57,13 +64,17 @@ function Header() {
 
     useEffect(() => {
         const handleClickOutside = (event) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+            if (dropdownAvatarRef.current && !dropdownAvatarRef.current.contains(event.target)) {
                 setDropdownActive(false);
+            }
+            if (dropdownNotiRef.current && !dropdownNotiRef.current.contains(event.target)) {
+                setDropdownNoti(false);
             }
         };
 
         const handleScroll = () => {
-            setDropdownActive(false); // Đóng dropdown khi cuộn
+            setDropdownActive(false);
+            setDropdownNoti(false);
         };
 
         document.addEventListener('mousedown', handleClickOutside);
@@ -117,10 +128,12 @@ function Header() {
                         <p className={cx('icons')}>
                             <IoIosChatbubbles />
                         </p>
-                        <p className={cx('icons')}>
-                            <IoIosNotifications />
-                        </p>
-                        <div className={cx('avatar-frame')} ref={dropdownRef}>
+                        <div className={cx('icons', 'notification')} ref={dropdownNotiRef}>
+                            <IoIosNotifications onClick={handleToggleNoti} />
+                            <Notification className={cx('noti-frame', { active: isDropdownNoti })} />
+                        </div>
+
+                        <div className={cx('avatar-frame')} ref={dropdownAvatarRef}>
                             <img src={user && user.user.profile.avatar} alt="avatar" onClick={handleToggleDropdown} />
                             <div className={cx('avatar-dropdown', { active: isDropdownActive })}>
                                 <div className={cx('dropdown-table')}>

@@ -18,7 +18,7 @@ function Overview() {
                         <div className={cx('overview')}>
                             <div className={cx('thead')}>
                                 <p className={cx('cate')}>Oveview</p>
-                                <p>Topics</p>
+                                <p>Threads</p>
                                 <p>Interactions</p>
                                 <p>Latest</p>
                             </div>

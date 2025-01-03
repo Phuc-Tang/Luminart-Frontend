@@ -68,6 +68,17 @@
     height: auto;
     border-radius: 5px;
     background: #1f1e1e;
+
+    p {
+        font-size: 20px;
+        padding: 10px;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+
+    p:hover {
+        background: var(--gradiant-primary);
+    }
 }
 
 .right {
@@ -77,6 +88,30 @@
 
 .right .icons {
     margin-right: 30px;
+    cursor: pointer;
+}
+
+.right .notification {
+    position: relative;
+}
+
+//Notification
+.noti-frame {
+    position: absolute;
+    width: 400px;
+    display: none;
+    overflow: hidden;
+    max-height: 510px;
+    margin-top: 13px;
+    right: 0;
+    padding: 10px;
+    border-radius: 5px;
+    z-index: 102 !important;
+    background-color: #202020;
+}
+
+.noti-frame.active {
+    display: block;
 }
 
 .avatar-frame {

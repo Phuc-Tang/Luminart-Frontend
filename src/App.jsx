@@ -112,6 +112,21 @@ function App() {
                     })}
                 </Routes>
             </div>
+            <ToastContainer
+                toastClassName={cx('custom-toast')}
+                bodyClassName={cx('custom-body')}
+                progressClassName={cx('custom-progress')}
+                position="top-left"
+                autoClose={4000}
+                hideProgressBar={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="colored"
+                transition={Slide}
+            />
         </Router>
     );
 }
